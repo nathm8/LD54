@@ -25,7 +25,7 @@ enum TutorialState {
 class GameState implements MessageListener implements Updateable {
 
     var circles = 0;
-    var triangles = 1;
+    var triangles = 0;
     var squares = 0;
     var state = None;
     var tutorialState = Start;
@@ -63,40 +63,74 @@ class GameState implements MessageListener implements Updateable {
             }
         } if (Std.isOfType(msg, MouseReleaseMessage)) {
             if (state == PlacingMine) {
-                placing.place();
                 state = None;
-                circles -= 1;
+                triangles -= 1;
+                var p = new Vector2D(hxd.Window.getInstance().mouseX, hxd.Window.getInstance().mouseY);
+                p -= new Vector2D(500, 500);
+                placing.place(currentPlanet.getClosestSide(normaliseTheta(p.angle())));
+                placing = null;
+                MessageManager.sendMessage(new RemoveResourceFromInventoryMessage(Triangle));
             }
         } if (Std.isOfType(msg, ResourceClickedMessage)) {
             var res = cast(msg, ResourceClickedMessage).resource;
             if (state == None && res.planet == currentPlanet && canPickup()) {
+                var src = normaliseTheta(bot.theta);
+                var dst = normaliseTheta(currentPlanet.getAngleOnSide(res.side)-Math.PI/2);
+                trace(src, dst);
                 state = BotTravellingToResource;
-                TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, bot.theta, currentPlanet.getAngleOnSide(res.side)-Math.PI/2, 0, 2));
-                TweenManager.add(new DelayedCallTween(() -> MessageManager.sendMessage(new PickUpResourceMessage(res)), 0, 2));
+                if (src != dst) {
+                    TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, src, dst, 0, 2));
+                    TweenManager.add(new DelayedCallTween(() -> MessageManager.sendMessage(new PickUpResourceMessage(res)), 0, 2));
+                } else {
+                    MessageManager.sendMessage(new PickUpResourceMessage(res));
+                }
             }
         } if (Std.isOfType(msg, SpawnResourceMessage)) {
             var params = cast(msg, SpawnResourceMessage);
             new Resource(params.type, params.planet, params.side);
         } if (Std.isOfType(msg, PickUpResourceMessage)) {
+            if (state != BotTravellingToResource) return false;
             var res = cast(msg, PickUpResourceMessage).resource;
-            if (res.type == Triangle) triangles += 1;
-            if (res.type == Circle) circles += 1;
-            if (res.type == Square) squares += 1;
+            if (res.type == Triangle) {
+                triangles += 1;
+                TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
+            } if (res.type == Circle) {
+                circles += 1;
+                TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
+            } if (res.type == Square) {
+                squares += 1;
+                TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
+            }
             state = None;
             TweenManager.add(new ParabolicMoveTween(res.sprite, new Vector2D(res.sprite.x, res.sprite.y), bot.position, 0, 0.5));
+            TweenManager.add(new ParabolicScaleTween(res.sprite, 1.0, 0.0, 0, 0.5));
             TweenManager.add(new DelayedCallTween(() -> res.remove(), 0, 0.5));
-            TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
         }
 		return false;
 	}
 
     function getTriangle() {
-        trace("getting tri");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Triangle));
         if (tutorialState == Start) {
             tutorialState = Mine;
             MessageManager.sendMessage(new ShowMine());
         }
+    }
+
+    function getSquare() {
+        MessageManager.sendMessage(new AddResourceToInventoryMessage(Square));
+        // if (tutorialState == Start) {
+        //     tutorialState = Mine;
+        //     MessageManager.sendMessage(new ShowMine());
+        // }
+    }
+
+    function getCircle() {
+        MessageManager.sendMessage(new AddResourceToInventoryMessage(Circle));
+        // if (tutorialState == Start) {
+        //     tutorialState = Mine;
+        //     MessageManager.sendMessage(new ShowMine());
+        // }
     }
 
     function canPickup() : Bool {

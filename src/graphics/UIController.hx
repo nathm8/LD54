@@ -12,6 +12,7 @@ class UIController implements MessageListener {
     var ui: Graphics;
     public var camera: Camera;
     var inventory: Array<ResourceIcon> = [null, null, null];
+    var costs: Array<ResourceIcon> = [null, null, null, null, null, null];
     var sprite: Bitmap;
 
     public function new(s: Scene) {
@@ -37,9 +38,34 @@ class UIController implements MessageListener {
             var res = cast(msg, AddResourceToInventoryMessage).resourceType;
             for (i in 0...3) {
                 if (inventory[i] == null) {
-                    inventory[i] = new ResourceIcon(ui, res, new Vector2D(668, 51+70*i));
+                    inventory[i] = new ResourceIcon(ui, res, new Vector2D(667, 51+75*i));
                     break;
                 }
+            }
+            if (res == Triangle) {
+                if (costs[0] != null)
+                    costs[0].brighten();
+                if (costs[3] != null)
+                    costs[3].brighten();
+            } /*else if (res == Square) {
+                if (costs[0] != null)
+                    costs[0].brighten();
+                if (costs[3] != null)
+                    costs[3].brighten();
+            }*/
+        } if (Std.isOfType(msg, RemoveResourceFromInventoryMessage)) {
+            var res = cast(msg, RemoveResourceFromInventoryMessage).resourceType;
+            for (i in 0...3) {
+                if (inventory[i].type == res) {
+                    inventory[i].remove();
+                    inventory[i] = null;
+                    break;
+                }
+            } if (res == Triangle) {
+                if (costs[0] != null)
+                    costs[0].darken();
+                if (costs[3] != null)
+                    costs[3].darken();
             }
         } if (Std.isOfType(msg, ShowMine)) {
             sprite.tile = hxd.Res.img.UI1.toTile();
@@ -48,7 +74,7 @@ class UIController implements MessageListener {
             mineInteractive.y = 52;
             mineInteractive.onClick = mineClicked;
             mineInteractive.cursor = Button;
-            new ResourceIcon(ui, Triangle, new Vector2D(90, 215));
+            costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
         }
         return false;
     }

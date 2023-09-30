@@ -42,6 +42,10 @@ class AddResourceToInventoryMessage extends Message {
 	public var resourceType: ResourceType;
 	public function new(r: ResourceType) {super(); resourceType = r;}
 }
+class RemoveResourceFromInventoryMessage extends Message {
+	public var resourceType: ResourceType;
+	public function new(r: ResourceType) {super(); resourceType = r;}
+}
 class SpawnResourceMessage extends Message {
 	public var planet: Planet;
 	public var side: Int;

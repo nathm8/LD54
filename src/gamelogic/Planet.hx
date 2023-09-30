@@ -1,5 +1,7 @@
 package gamelogic;
 
+import gamelogic.Resource.ResourceType;
+import graphics.ResourceIcon;
 import utilities.Vector2D;
 import utilities.RNGManager;
 import h2d.Graphics;
@@ -19,10 +21,12 @@ class Planet implements Updateable {
     var yearElapsed = 0.0;
     var time = 0.0;
     public var position: Vector2D;
+    public var resources = new Array<ResourceType>();
 
     public function new(p: Object, o:Layers, s: Int, r: Float, d:Float, y:Float) {
         sides = s;
         orbitRadius = r;
+        for (_ in 0...sides) resources.push(null);
         planetRadius = 150 / (2*Math.sin(Math.PI/sides));
         day = d;
         dayElapsed = RNGManager.rand.rand()*day;
@@ -55,6 +59,11 @@ class Planet implements Updateable {
         graphics.rotation = rot;
     }
 
+    public function placeResource(t: ResourceType, i: Int) {
+        resources[i] = t;
+        var res = new ResourceIcon(graphics, t, getUndergroundResourcePositionOnSide(i), true);
+    }
+
     // from angle t, find which side is closest
     public function getClosestSide(t: Float): Int {
         for (i in 0...sides) {
@@ -70,9 +79,16 @@ class Planet implements Updateable {
     }
 
     public function getBuildingPositionOnSide(i: Int): Vector2D {
-        var v1 = new Vector2D(planetRadius+110, 0).rotate(i/sides*2*Math.PI); 
+        var v1 = new Vector2D(planetRadius+70, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
-        var v2 = new Vector2D(planetRadius+110, 0).rotate((i+1)/sides*2*Math.PI); 
+        var v2 = new Vector2D(planetRadius+70, 0).rotate((i+1)/sides*2*Math.PI); 
+        return (v1 + v2)/2;
+    }
+
+    public function getUndergroundResourcePositionOnSide(i: Int): Vector2D {
+        var v1 = new Vector2D(planetRadius-50, 0).rotate(i/sides*2*Math.PI); 
+        if (i+1 == sides) i = -1;
+        var v2 = new Vector2D(planetRadius-50, 0).rotate((i+1)/sides*2*Math.PI); 
         return (v1 + v2)/2;
     }
 

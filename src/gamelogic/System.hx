@@ -49,7 +49,11 @@ class System implements Updateable {
 
     public function getStartingPlanet(): Planet {
         for (p in planets) {
-            if (p.sides == 3) return p;
+            if (p.sides == 3){
+                p.placeResource(Square, 0);
+                p.placeResource(Circle, 2);
+                return p;
+            } 
         }
         return null;
     }

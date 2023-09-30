@@ -63,6 +63,24 @@ class ParabolicMoveTween extends Tween {
 	}
 }
 
+class ParabolicScaleTween extends Tween {
+	var obj: Object;
+	var start: Float;
+	var end: Float;
+
+	public function new(o: Object, s: Float, e:Float, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o; start = s; end = e;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		t = t*t;
+		var s = (1-t)*start + t*end;
+		obj.scaleX = s; obj.scaleY = s;
+	}
+}
+
 class BotPlanetTravelTween extends Tween {
 	var bot:Bot;
 	var planet:Planet;

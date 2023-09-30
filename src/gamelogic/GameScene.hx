@@ -35,9 +35,10 @@ class GameScene extends Scene implements MessageListener {
 		
 		var bot = new Bot(p);
 		updateables.push(bot);
-
+		
 		uiController = new UIController(this);
 		gameState = new GameState(p, bot);
+		updateables.push(gameState);
 
 		// very hacky minimap
 		var minimap = new Camera(this);
