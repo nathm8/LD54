@@ -94,13 +94,13 @@ class UIController implements MessageListener {
         } if (Std.isOfType(msg, BrightenTrianglesMessage)) {
             brightenTriangles();
         } if (Std.isOfType(msg, DarkenSquaresMessage)) {
-            darkenTriangles();
+            darkenSquares();
         } if (Std.isOfType(msg, BrightenSquaresMessage)) {
-            brightenTriangles();
+            brightenSquares();
         } if (Std.isOfType(msg, DarkenCirclesMessage)) {
-            darkenTriangles();
+            darkenCircles();
         } if (Std.isOfType(msg, BrightenCirclesMessage)) {
-            brightenTriangles();
+            brightenCircles();
         }
         return false;
     }
