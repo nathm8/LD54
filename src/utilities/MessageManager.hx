@@ -1,16 +1,19 @@
 package utilities;
 
-import gamelogic.Resource;
 import hxd.Event;
+import gamelogic.Resource;
 import gamelogic.Resource.ResourceType;
 import gamelogic.Planet;
+import graphics.ResourceIcon;
 
 class Message {public function new(){}}
 
 class PhysicsStepDoneMessage extends Message {}
 class MineClickedMessage extends Message {}
 class RestartMessage extends Message {}
-class ShowMine extends Message {}
+class ShowMineMessage extends Message {}
+class DarkenTrianglesMessage extends Message {}
+class BrightenTrianglesMessage extends Message {}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;
@@ -42,9 +45,17 @@ class AddResourceToInventoryMessage extends Message {
 	public var resourceType: ResourceType;
 	public function new(r: ResourceType) {super(); resourceType = r;}
 }
+class DropResourceMessage extends Message {
+	public var resourceType: ResourceType;
+	public function new(r: ResourceType) {super(); resourceType = r;}
+}
 class RemoveResourceFromInventoryMessage extends Message {
 	public var resourceType: ResourceType;
 	public function new(r: ResourceType) {super(); resourceType = r;}
+}
+class DumpInventoryMessage extends Message {
+	public var resourceIcon: ResourceIcon;
+	public function new(r: ResourceIcon) {super(); resourceIcon = r;}
 }
 class SpawnResourceMessage extends Message {
 	public var planet: Planet;

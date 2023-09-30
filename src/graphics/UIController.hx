@@ -42,17 +42,6 @@ class UIController implements MessageListener {
                     break;
                 }
             }
-            if (res == Triangle) {
-                if (costs[0] != null)
-                    costs[0].brighten();
-                if (costs[3] != null)
-                    costs[3].brighten();
-            } /*else if (res == Square) {
-                if (costs[0] != null)
-                    costs[0].brighten();
-                if (costs[3] != null)
-                    costs[3].brighten();
-            }*/
         } if (Std.isOfType(msg, RemoveResourceFromInventoryMessage)) {
             var res = cast(msg, RemoveResourceFromInventoryMessage).resourceType;
             for (i in 0...3) {
@@ -61,13 +50,18 @@ class UIController implements MessageListener {
                     inventory[i] = null;
                     break;
                 }
-            } if (res == Triangle) {
-                if (costs[0] != null)
-                    costs[0].darken();
-                if (costs[3] != null)
-                    costs[3].darken();
+            } 
+        } if (Std.isOfType(msg, DumpInventoryMessage)) {
+            var res = cast(msg, DumpInventoryMessage).resourceIcon;
+            for (i in 0...3) {
+                if (inventory[i] == res) {
+                    inventory[i].remove();
+                    inventory[i] = null;
+                    break;
+                }
             }
-        } if (Std.isOfType(msg, ShowMine)) {
+            MessageManager.sendMessage(new DropResourceMessage(res.type));
+        } if (Std.isOfType(msg, ShowMineMessage)) {
             sprite.tile = hxd.Res.img.UI1.toTile();
             var mineInteractive = new Interactive(120,120,sprite);
             mineInteractive.x = 37;
@@ -75,7 +69,25 @@ class UIController implements MessageListener {
             mineInteractive.onClick = mineClicked;
             mineInteractive.cursor = Button;
             costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
+        } if (Std.isOfType(msg, DarkenTrianglesMessage)) {
+            darkenTriangles();
+        } if (Std.isOfType(msg, BrightenTrianglesMessage)) {
+            brightenTriangles();
         }
         return false;
+    }
+
+    function darkenTriangles() {
+        if (costs[0] != null)
+            costs[0].darken();
+        if (costs[3] != null)
+            costs[3].darken();
+    }
+
+    function brightenTriangles() {
+        if (costs[0] != null)
+            costs[0].brighten();
+        if (costs[3] != null)
+            costs[3].brighten();
     }
 }

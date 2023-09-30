@@ -43,7 +43,7 @@ class Planet implements Updateable {
         o.add(orbit, 2);
 
         graphics = new Graphics(p);
-        graphics.beginFill(0x00AA00);
+        graphics.beginFill(0x007700);
         graphics.drawCircle(0, 0, planetRadius, sides);
     }
 

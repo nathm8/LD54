@@ -85,6 +85,12 @@ class GameState implements MessageListener implements Updateable {
                     MessageManager.sendMessage(new PickUpResourceMessage(res));
                 }
             }
+        } if (Std.isOfType(msg, DropResourceMessage)) {
+            var params = cast(msg, DropResourceMessage);
+            new Resource(params.resourceType, currentPlanet, currentPlanet.getClosestSide(bot.theta));
+            if (params.resourceType == Triangle) triangles -= 1;
+            if (params.resourceType == Circle) circles -= 1;
+            if (params.resourceType == Square) squares -= 1;
         } if (Std.isOfType(msg, SpawnResourceMessage)) {
             var params = cast(msg, SpawnResourceMessage);
             new Resource(params.type, params.planet, params.side);
@@ -113,7 +119,7 @@ class GameState implements MessageListener implements Updateable {
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Triangle));
         if (tutorialState == Start) {
             tutorialState = Mine;
-            MessageManager.sendMessage(new ShowMine());
+            MessageManager.sendMessage(new ShowMineMessage());
         }
     }
 
@@ -121,7 +127,7 @@ class GameState implements MessageListener implements Updateable {
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Square));
         // if (tutorialState == Start) {
         //     tutorialState = Mine;
-        //     MessageManager.sendMessage(new ShowMine());
+        //     MessageManager.sendMessage(new ShowMineMessage());
         // }
     }
 
@@ -129,7 +135,7 @@ class GameState implements MessageListener implements Updateable {
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Circle));
         // if (tutorialState == Start) {
         //     tutorialState = Mine;
-        //     MessageManager.sendMessage(new ShowMine());
+        //     MessageManager.sendMessage(new ShowMineMessage());
         // }
     }
 
@@ -138,6 +144,8 @@ class GameState implements MessageListener implements Updateable {
     }
 
     public function update(dt: Float) {
+        if (triangles == 0) MessageManager.sendMessage(new DarkenTrianglesMessage());
+        else MessageManager.sendMessage(new BrightenTrianglesMessage());
         for (u in updateables) u.update(dt);
     }
 }
