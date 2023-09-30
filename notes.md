@@ -3,15 +3,13 @@
 151, 52
 215, 52
 
-
-
 665, 53
 665, 123
 665, 193
 
-49x49
-
-
+Names Ideas
+==============
+Fac Spatium
 
 TODO
 ==============
@@ -50,3 +48,4 @@ Random gen system
 Bugs
 ---------------
 Quantum storage with dropping resources
+Robot not always taking shortest path

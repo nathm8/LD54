@@ -69,6 +69,14 @@ class UIController implements MessageListener {
             mineInteractive.onClick = mineClicked;
             mineInteractive.cursor = Button;
             costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
+        /*} if (Std.isOfType(msg, ShowGunMessage)) {
+            sprite.tile = hxd.Res.img.UI2.toTile();
+            var gunInteractive = new Interactive(120,120,sprite);
+            gunInteractive.x = 37;
+            gunInteractive.y = 52;
+            gunInteractive.onClick = gunClicked;
+            gunInteractive.cursor = Button;
+            costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));*/
         } if (Std.isOfType(msg, DarkenTrianglesMessage)) {
             darkenTriangles();
         } if (Std.isOfType(msg, BrightenTrianglesMessage)) {

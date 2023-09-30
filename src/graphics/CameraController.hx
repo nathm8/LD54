@@ -32,6 +32,7 @@ class CameraController  implements Updateable {
         camera.x = p.x;
         camera.y = p.y - 50;
         camera.rotation = -target.graphics.rotation;
+        // camera.rotation = -target.graphics.rotation - Math.PI + Math.PI/6;
     }
     
 }

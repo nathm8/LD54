@@ -141,7 +141,6 @@ class GameState implements MessageListener implements Updateable {
 	}
 
     function getTriangle() {
-        trace("getTriangle");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Triangle));
         if (tutorialState == Start) {
             tutorialState = Mine;
@@ -152,18 +151,16 @@ class GameState implements MessageListener implements Updateable {
     }
 
     function getSquare() {
-        trace("getSquare");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Square));
-        // if (tutorialState == Start) {
-        //     tutorialState = Mine;
-        //     MessageManager.sendMessage(new ShowMineMessage());
+        // if (tutorialState == Mine) {
+        //     tutorialState = Gun;
+        //     MessageManager.sendMessage(new ShowGunMessage());
         // }
         squares += 1;
         state = None;
     }
 
     function getCircle() {
-        trace("getCircle");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Circle));
         // if (tutorialState == Start) {
         //     tutorialState = Mine;
