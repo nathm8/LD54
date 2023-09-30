@@ -6,10 +6,13 @@ import h2d.Bitmap;
 import h2d.Camera;
 import h2d.Interactive;
 import utilities.MessageManager;
+import utilities.Vector2D;
 
-class UIController {
+class UIController implements MessageListener {
     var ui: Graphics;
     public var camera: Camera;
+    var inventory: Array<ResourceIcon> = [null, null, null];
+    var sprite: Bitmap;
 
     public function new(s: Scene) {
         ui = new Graphics();
@@ -20,18 +23,33 @@ class UIController {
 		camera = new Camera(s);
 		camera.layerVisible = (layer) -> layer == 1;
 
-        var sprite = new Bitmap(hxd.Res.img.UI1.toTile(), ui);
+        sprite = new Bitmap(hxd.Res.img.UI0.toTile(), ui);
 
-        // var mine = new Bitmap(hxd.Res.img.Mine.toTile().center(), ui);
-        // mine.x = 187-93.75; mine.y = 125;
-        var mineInteractive = new Interactive(120,120,sprite);
-        mineInteractive.x = 37;
-        mineInteractive.y = 52;
-        mineInteractive.onClick = mineClicked;
-        mineInteractive.cursor = Button;
+        MessageManager.addListener(this);
     }
 
     function mineClicked(e: hxd.Event) {
         MessageManager.sendMessage(new MineClickedMessage());
+    }
+
+    public function receiveMessage(msg:Message):Bool {
+        if (Std.isOfType(msg, AddResourceToInventoryMessage)) {
+            var res = cast(msg, AddResourceToInventoryMessage).resourceType;
+            for (i in 0...3) {
+                if (inventory[i] == null) {
+                    inventory[i] = new ResourceIcon(ui, res, new Vector2D(668, 51+70*i));
+                    break;
+                }
+            }
+        } if (Std.isOfType(msg, ShowMine)) {
+            sprite.tile = hxd.Res.img.UI1.toTile();
+            var mineInteractive = new Interactive(120,120,sprite);
+            mineInteractive.x = 37;
+            mineInteractive.y = 52;
+            mineInteractive.onClick = mineClicked;
+            mineInteractive.cursor = Button;
+            new ResourceIcon(ui, Triangle, new Vector2D(90, 215));
+        }
+        return false;
     }
 }

@@ -17,11 +17,11 @@ class System implements Updateable {
     public function new(p: Object, l: Layers) {
         initGraphics(p);
 
-        var sides = [3,3,3,4,4,5];
+        var sides = [3,3,3,4,4];
         RNGManager.rand.shuffle(sides);
         // var radii = [50,100,150,200,250,300,350];
         for (i in 0...sides.length) {
-            var pl = new Planet(graphics, l, sides[i], 300*(i+3), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
+            var pl = new Planet(graphics, l, sides[i], 300*(i+3) + RNGManager.rand.random(100), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
             planets.push(pl);
         }
     }

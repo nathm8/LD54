@@ -45,6 +45,24 @@ class FadeTween extends Tween {
 	}
 }
 
+class ParabolicMoveTween extends Tween {
+	var obj: Object;
+	var start: Vector2D;
+	var end: Vector2D;
+
+	public function new(o: Object, s: Vector2D, e:Vector2D, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o; start = s; end = e;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		t = t*t;
+		var v = (1-t)*start + t*end;
+		obj.x = v.x; obj.y = v.y;
+	}
+}
+
 class BotPlanetTravelTween extends Tween {
 	var bot:Bot;
 	var planet:Planet;

@@ -14,10 +14,10 @@ enum ResourceType{
 }
 
 class Resource implements MessageListener {
-    var type: ResourceType;
+    public var type: ResourceType;
     public var id: Int;
     static var idMax = 0;
-    var sprite: Bitmap;
+    public var sprite: Bitmap;
     public var planet: Planet;
     public var side: Int;
 
@@ -42,7 +42,9 @@ class Resource implements MessageListener {
         sprite.y = p.y;
         sprite.rotation = planet.getAngleOnSide(s);
 
-        var interactive     = new Interactive(80, 80, sprite);
+        var interactive     = new Interactive(49, 49, sprite);
+        interactive.x -= 49/2;
+        interactive.y -= 49/2;
         interactive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new ResourceClickedMessage(this));
         interactive.cursor  = Button;
 
@@ -51,6 +53,10 @@ class Resource implements MessageListener {
 
     public function receiveMessage(msg:Message):Bool {
         return false;
+    }
+
+    public function remove() {
+        sprite.remove();
     }
 
 }

@@ -10,6 +10,7 @@ class Message {public function new(){}}
 class PhysicsStepDoneMessage extends Message {}
 class MineClickedMessage extends Message {}
 class RestartMessage extends Message {}
+class ShowMine extends Message {}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;
@@ -32,6 +33,14 @@ class MouseMoveMessage extends Message {
 class ResourceClickedMessage extends Message {
 	public var resource: Resource;
 	public function new(r: Resource) {super(); resource = r;}
+}
+class PickUpResourceMessage extends Message {
+	public var resource: Resource;
+	public function new(r: Resource) {super(); resource = r;}
+}
+class AddResourceToInventoryMessage extends Message {
+	public var resourceType: ResourceType;
+	public function new(r: ResourceType) {super(); resourceType = r;}
 }
 class SpawnResourceMessage extends Message {
 	public var planet: Planet;

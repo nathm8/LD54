@@ -13,6 +13,7 @@ class Bot implements Updateable {
     var sprite: Bitmap;
     public var theta = 0.0;
     var time = 0.0;
+    public var position: Vector2D;
 
     public function new(p: Planet) {
         planet = p;
@@ -23,9 +24,9 @@ class Bot implements Updateable {
     public function update(dt: Float) {
         time += dt;
         var height = planet.planetRadius + 50 + 10*Math.sin(2*time);
-        var pos = new Vector2D(height, 0).rotate(theta);
-        sprite.x = pos.x;
-        sprite.y = pos.y;
+        position = new Vector2D(height, 0).rotate(theta);
+        sprite.x = position.x;
+        sprite.y = position.y;
         sprite.rotation = theta + Math.PI/2;
     }
 }
