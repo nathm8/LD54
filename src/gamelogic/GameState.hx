@@ -22,6 +22,8 @@ enum State {
 enum TutorialState {
     Start;
     Mine;
+    Gun;
+    Done;
 }
 
 class GameState implements MessageListener implements Updateable {
@@ -75,7 +77,6 @@ class GameState implements MessageListener implements Updateable {
             }
         } if (Std.isOfType(msg, ResourceClickedMessage)) {
             var res = cast(msg, ResourceClickedMessage).resource;
-            trace("ResourceClickedMessage", state);
             if (state == None && res.planet == currentPlanet && canPickup()) {
                 var src = normaliseTheta(bot.theta);
                 var dst = normaliseTheta(currentPlanet.getAngleOnSide(res.side)-Math.PI/2);
@@ -90,7 +91,6 @@ class GameState implements MessageListener implements Updateable {
         } if (Std.isOfType(msg, DropResourceMessage)) {
             var params = cast(msg, DropResourceMessage);
             new Resource(params.resourceType, currentPlanet, currentPlanet.getClosestSide(bot.theta));
-            trace("drop", triangles, circles, squares);
             if (params.resourceType == Triangle) triangles -= 1;
             if (params.resourceType == Circle) circles -= 1;
             if (params.resourceType == Square) squares -= 1;
@@ -111,7 +111,6 @@ class GameState implements MessageListener implements Updateable {
             TweenManager.add(new ParabolicScaleTween(res.sprite, 1.0, 0.0, 0, 0.5));
             TweenManager.add(new DelayedCallTween(() -> res.remove(), 0, 0.5));
         } if (Std.isOfType(msg, DemolishPlaceableMessage)) {
-            trace("DemolishPlaceableMessage", state, canPickup());
             var placeable = cast(msg, DemolishPlaceableMessage).placeable;
             if (state != None || placeable.planet != currentPlanet || !canPickup()) return false;
             var src = normaliseTheta(bot.theta);
@@ -152,20 +151,20 @@ class GameState implements MessageListener implements Updateable {
 
     function getSquare() {
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Square));
-        // if (tutorialState == Mine) {
-        //     tutorialState = Gun;
-        //     MessageManager.sendMessage(new ShowGunMessage());
-        // }
+        if (tutorialState == Mine) {
+            tutorialState = Gun;
+            MessageManager.sendMessage(new ShowGunMessage());
+        }
         squares += 1;
         state = None;
     }
 
     function getCircle() {
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Circle));
-        // if (tutorialState == Start) {
-        //     tutorialState = Mine;
-        //     MessageManager.sendMessage(new ShowMineMessage());
-        // }
+        if (tutorialState == Gun) {
+            tutorialState = Done;
+            MessageManager.sendMessage(new ShowAllMessage());
+        }
         circles += 1;
         state = None;
     }
@@ -177,6 +176,10 @@ class GameState implements MessageListener implements Updateable {
     public function update(dt: Float) {
         if (triangles == 0) MessageManager.sendMessage(new DarkenTrianglesMessage());
         else MessageManager.sendMessage(new BrightenTrianglesMessage());
+        if (squares == 0) MessageManager.sendMessage(new DarkenSquaresMessage());
+        else MessageManager.sendMessage(new BrightenSquaresMessage());
+        if (circles == 0) MessageManager.sendMessage(new DarkenCirclesMessage());
+        else MessageManager.sendMessage(new BrightenCirclesMessage());
         for (u in updateables) u.update(dt);
     }
 }

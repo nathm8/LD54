@@ -12,10 +12,19 @@ class Message {public function new(){}}
 
 class PhysicsStepDoneMessage extends Message {}
 class MineClickedMessage extends Message {}
+class GunClickedMessage extends Message {}
+class BeltClickedMessage extends Message {}
+class RocketClickedMessage extends Message {}
 class RestartMessage extends Message {}
 class ShowMineMessage extends Message {}
+class ShowGunMessage extends Message {}
+class ShowAllMessage extends Message {}
 class DarkenTrianglesMessage extends Message {}
 class BrightenTrianglesMessage extends Message {}
+class DarkenCirclesMessage extends Message {}
+class BrightenCirclesMessage extends Message {}
+class DarkenSquaresMessage extends Message {}
+class BrightenSquaresMessage extends Message {}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;

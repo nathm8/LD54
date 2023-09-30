@@ -15,8 +15,6 @@ TODO
 ==============
 MVP
 --------------
-Implement placing belt
-Implement belt moving resources
 Implement placing Gun
 Gun transporting Resources
 Gun transporting Bot
@@ -24,6 +22,8 @@ Implement placing Rocket
 Fuelling Rocket
 Implement Rocket takeoff
 Show Victory screen
+Implement placing belt
+Implement belt moving resources
 Show Defeat screen
 
 Polish

@@ -52,7 +52,7 @@ class System implements Updateable {
         for (p in planets) {
             if (p.sides == 3){
                 p.placeResource(Square, 0);
-                p.placeResource(Circle, 2);
+                // p.placeResource(Circle, 2);
                 return p;
             } 
         }

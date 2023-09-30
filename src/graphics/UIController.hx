@@ -29,16 +29,12 @@ class UIController implements MessageListener {
         MessageManager.addListener(this);
     }
 
-    function mineClicked(e: hxd.Event) {
-        MessageManager.sendMessage(new MineClickedMessage());
-    }
-
     public function receiveMessage(msg:Message):Bool {
         if (Std.isOfType(msg, AddResourceToInventoryMessage)) {
             var res = cast(msg, AddResourceToInventoryMessage).resourceType;
             for (i in 0...3) {
                 if (inventory[i] == null) {
-                    inventory[i] = new ResourceIcon(ui, res, new Vector2D(667, 51+75*i));
+                    inventory[i] = new ResourceIcon(ui, res, new Vector2D(668, 52+73*i));
                     break;
                 }
             }
@@ -66,20 +62,44 @@ class UIController implements MessageListener {
             var mineInteractive = new Interactive(120,120,sprite);
             mineInteractive.x = 37;
             mineInteractive.y = 52;
-            mineInteractive.onClick = mineClicked;
+            mineInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new MineClickedMessage());
             mineInteractive.cursor = Button;
             costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
-        /*} if (Std.isOfType(msg, ShowGunMessage)) {
+        } if (Std.isOfType(msg, ShowGunMessage)) {
             sprite.tile = hxd.Res.img.UI2.toTile();
             var gunInteractive = new Interactive(120,120,sprite);
-            gunInteractive.x = 37;
+            gunInteractive.x = 174;
             gunInteractive.y = 52;
-            gunInteractive.onClick = gunClicked;
+            gunInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new GunClickedMessage());
             gunInteractive.cursor = Button;
-            costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));*/
+            costs[1] = new ResourceIcon(ui, Square, new Vector2D(237, 215));
+        } if (Std.isOfType(msg, ShowAllMessage)) {
+            sprite.tile = hxd.Res.img.UI4.toTile();
+            var beltInteractive = new Interactive(120,120,sprite);
+            beltInteractive.x = 304;
+            beltInteractive.y = 52;
+            beltInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new BeltClickedMessage());
+            beltInteractive.cursor = Button;
+            costs[2] = new ResourceIcon(ui, Circle, new Vector2D(373, 215));
+            var rocketInteractive = new Interactive(120,120,sprite);
+            rocketInteractive.x = 439;
+            rocketInteractive.y = 52;
+            rocketInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new RocketClickedMessage());
+            rocketInteractive.cursor = Button;
+            costs[3] = new ResourceIcon(ui, Triangle, new Vector2D(466, 215));
+            costs[4] = new ResourceIcon(ui, Square, new Vector2D(516, 215));
+            costs[5] = new ResourceIcon(ui, Circle, new Vector2D(566, 215));
         } if (Std.isOfType(msg, DarkenTrianglesMessage)) {
             darkenTriangles();
         } if (Std.isOfType(msg, BrightenTrianglesMessage)) {
+            brightenTriangles();
+        } if (Std.isOfType(msg, DarkenSquaresMessage)) {
+            darkenTriangles();
+        } if (Std.isOfType(msg, BrightenSquaresMessage)) {
+            brightenTriangles();
+        } if (Std.isOfType(msg, DarkenCirclesMessage)) {
+            darkenTriangles();
+        } if (Std.isOfType(msg, BrightenCirclesMessage)) {
             brightenTriangles();
         }
         return false;
@@ -97,5 +117,33 @@ class UIController implements MessageListener {
             costs[0].brighten();
         if (costs[3] != null)
             costs[3].brighten();
+    }
+
+    function brightenCircles() {
+        if (costs[2] != null)
+            costs[2].brighten();
+        if (costs[5] != null)
+            costs[5].brighten();
+    }
+
+    function darkenCircles() {
+        if (costs[2] != null)
+            costs[2].darken();
+        if (costs[5] != null)
+            costs[5].darken();
+    }
+
+    function brightenSquares() {
+        if (costs[1] != null)
+            costs[1].brighten();
+        if (costs[4] != null)
+            costs[4].brighten();
+    }
+
+    function darkenSquares() {
+        if (costs[1] != null)
+            costs[1].darken();
+        if (costs[4] != null)
+            costs[4].darken();
     }
 }
