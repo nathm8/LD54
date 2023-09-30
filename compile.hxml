@@ -1,0 +1,6 @@
+-cp src
+-lib heaps
+-lib box2d
+-js game.js
+-main Main
+-debug
