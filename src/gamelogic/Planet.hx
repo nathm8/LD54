@@ -60,7 +60,6 @@ class Planet implements Updateable {
         for (i in 0...sides) {
             var start = i*2*Math.PI/sides;
             var end = (i+1)*2*Math.PI/sides;
-            trace(start, end);
             if (t >= start && t <= end) {
                 return i;
             }
@@ -78,14 +77,15 @@ class Planet implements Updateable {
     }
 
     public function getResourcePositionOnSide(i: Int): Vector2D {
-        var v1 = new Vector2D(planetRadius+20, 0).rotate(i/sides*2*Math.PI); 
+        var v1 = new Vector2D(planetRadius+40, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
-        var v2 = new Vector2D(planetRadius+20, 0).rotate((i+1)/sides*2*Math.PI); 
-        return (v1*0.25 + v2*0.75);
+        var v2 = new Vector2D(planetRadius+40, 0).rotate((i+1)/sides*2*Math.PI); 
+        return (v1*0.4 + v2*0.6);
     }
 
     public function getAngleOnSide(i: Int): Float {
         var v = getBuildingPositionOnSide(i);
         return v.angle() + Math.PI/2;
     }
+
 }

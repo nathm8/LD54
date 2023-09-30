@@ -51,12 +51,12 @@ class BotPlanetTravelTween extends Tween {
 	var thetaStart: Float;
 	var thetaEnd: Float;
 
-	public function new(b:Bot, p: Planet, ts:Float, te: Float, te:Float, tt:Float) {
+	public function new(b:Bot, p: Planet, ths:Float, the: Float, te:Float, tt:Float) {
 		super(te, tt);
 		bot = b;
 		planet = p;
-		thetaStart = ts;
-		thetaEnd = te;
+		thetaStart = ths;
+		thetaEnd = the;
 	}
 
 	override function update(dt:Float) {

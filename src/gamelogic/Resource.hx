@@ -42,7 +42,7 @@ class Resource implements MessageListener {
         sprite.y = p.y;
         sprite.rotation = planet.getAngleOnSide(s);
 
-        var interactive     = new Interactive(49, 49, sprite);
+        var interactive     = new Interactive(80, 80, sprite);
         interactive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new ResourceClickedMessage(this));
         interactive.cursor  = Button;
 

@@ -17,7 +17,7 @@ class Bot implements Updateable {
     public function new(p: Planet) {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.Bot.toTile().center(), p.graphics);
-        theta = -Math.PI/3;
+        theta = p.getAngleOnSide(0) - Math.PI/2;
     }
 
     public function update(dt: Float) {
