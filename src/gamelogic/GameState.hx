@@ -89,15 +89,11 @@ class GameState implements MessageListener implements Updateable {
         } if (Std.isOfType(msg, ResourceClickedMessage)) {
             var res = cast(msg, ResourceClickedMessage).resource;
             if (state == None && res.planet == currentPlanet && canPickup()) {
-                var src = normaliseTheta(bot.theta);
-                var dst = normaliseTheta(currentPlanet.getAngleOnSide(res.side)-Math.PI/2);
                 state = Travelling;
-                if (src != dst) {
-                    TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, src, dst, 0, 2));
+                if (bot.moveTo(currentPlanet.getAngleOnSide(res.side)-Math.PI/2))
                     TweenManager.add(new DelayedCallTween(() -> MessageManager.sendMessage(new PickUpResourceMessage(res)), 0, 2));
-                } else {
+                else
                     MessageManager.sendMessage(new PickUpResourceMessage(res));
-                }
             }
         } if (Std.isOfType(msg, DropResourceMessage)) {
             var params = cast(msg, DropResourceMessage);
@@ -124,16 +120,11 @@ class GameState implements MessageListener implements Updateable {
         } if (Std.isOfType(msg, DemolishPlaceableMessage)) {
             var placeable = cast(msg, DemolishPlaceableMessage).placeable;
             if (state != None || placeable.planet != currentPlanet || !canPickup()) return false;
-            var src = normaliseTheta(bot.theta);
-            var dst = normaliseTheta(currentPlanet.getAngleOnSide(placeable.side)-Math.PI/2);
-            trace(src, dst);
             state = Travelling;
-            if (src != dst) {
-                TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, src, dst, 0, 2));
+            if (bot.moveTo(currentPlanet.getAngleOnSide(placeable.side)-Math.PI/2)) {
                 TweenManager.add(new DelayedCallTween(() -> MessageManager.sendMessage(new PickUpPlaceableMessage(placeable)), 0, 2));
-            } else {
+            } else
                 MessageManager.sendMessage(new PickUpPlaceableMessage(placeable));
-            }
         } if (Std.isOfType(msg, PickUpPlaceableMessage)) {
             var placeable = cast(msg, PickUpPlaceableMessage).placeable;
             if (placeable.cost[Triangle])

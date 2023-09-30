@@ -4,9 +4,11 @@ import h2d.Bitmap;
 import utilities.Vector2D;
 import utilities.MessageManager;
 import utilities.RNGManager;
+import graphics.TweenManager;
 import h2d.Graphics;
 import h2d.Object;
 import gamelogic.Updateable;
+import utilities.Constants.normaliseTheta;
 
 class Bot implements Updateable implements MessageListener {
 
@@ -49,6 +51,19 @@ class Bot implements Updateable implements MessageListener {
         sprite.x = position.x;
         sprite.y = position.y;
         sprite.rotation = theta + Math.PI/2;
+    }
+
+    // move from current theta to target, via the shortest path
+    public function moveTo(dst: Float): Bool {
+        var src = normaliseTheta(theta);
+        dst = normaliseTheta(dst);
+        if (src == dst) return false;
+        if (Math.abs(dst - src) > Math.PI) {
+            src = -(2*Math.PI - src);
+        }
+        trace(src, dst);
+        TweenManager.add(new BotPlanetTravelTween(this, planet, src, dst, 0, 2));
+        return true;
     }
 
     public function receiveMessage(msg:Message):Bool {
