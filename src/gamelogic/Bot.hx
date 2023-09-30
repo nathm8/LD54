@@ -7,6 +7,7 @@ import utilities.RNGManager;
 import graphics.TweenManager;
 import h2d.Graphics;
 import h2d.Object;
+import h2d.Interactive;
 import gamelogic.Updateable;
 import utilities.Constants.normaliseTheta;
 
@@ -26,7 +27,12 @@ class Bot implements Updateable implements MessageListener {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.BotBase.toTile().center(), p.graphics);
         face = new Bitmap(hxd.Res.img.BotWake1.toTile().center(), sprite);
-        theta = - Math.PI/2;
+        theta = -Math.PI/2;
+        var interactive = new Interactive(104,48,sprite);
+        interactive.x -= 104/2;
+        interactive.y -= 48/2;
+        interactive.cursor = Button;
+        interactive.onClick = (e: hxd.Event) -> (MessageManager.send(new BotClickedMessage()));
         MessageManager.addListener(this);
     }
 
@@ -54,16 +60,22 @@ class Bot implements Updateable implements MessageListener {
     }
 
     // move from current theta to target, via the shortest path
-    public function moveTo(dst: Float): Bool {
+    public function moveTo(dst: Float) {
         var src = normaliseTheta(theta);
         dst = normaliseTheta(dst);
-        if (src == dst) return false;
+        if (src == dst) return;
         if (Math.abs(dst - src) > Math.PI) {
-            src = -(2*Math.PI - src);
+            if (src > dst)
+                src = -(2*Math.PI - src);
+            else
+                dst = -(2*Math.PI - dst);
         }
-        trace(src, dst);
-        TweenManager.add(new BotPlanetTravelTween(this, planet, src, dst, 0, 2));
-        return true;
+        if (src < dst)
+            face.tile = hxd.Res.img.BotRight.toTile().center();
+        else
+            face.tile = hxd.Res.img.BotLeft.toTile().center();
+        faceTime = 1.0;
+        TweenManager.add(new BotPlanetTravelTween(this, planet, src, dst, 0, 1.5));
     }
 
     public function receiveMessage(msg:Message):Bool {

@@ -51,23 +51,23 @@ class Main extends hxd.App implements MessageListener {
 			case EPush:
 				var p = new Point(event.relX, event.relY);
 				s2d.camera.sceneToCamera(p);
-				MessageManager.sendMessage(new MouseClickMessage(event, p));
+				MessageManager.send(new MouseClickMessage(event, p));
 			case ERelease:
 				var p = new Point(event.relX, event.relY);
 				s2d.camera.sceneToCamera(p);
-				MessageManager.sendMessage(new MouseReleaseMessage(event, p));
+				MessageManager.send(new MouseReleaseMessage(event, p));
 			case EMove:
 				var p = new Point(event.relX, event.relY);
 				s2d.camera.sceneToCamera(p);
-				MessageManager.sendMessage(new MouseMoveMessage(event, p));
+				MessageManager.send(new MouseMoveMessage(event, p));
 			case EKeyDown:
 				switch (event.keyCode) {
 					case hxd.Key.R:
-						MessageManager.sendMessage(new RestartMessage());
+						MessageManager.send(new RestartMessage());
 					// case hxd.Key.ENTER:
 				}
 			case EKeyUp:
-				MessageManager.sendMessage(new KeyUpMessage(event.keyCode));
+				MessageManager.send(new KeyUpMessage(event.keyCode));
 			case _:
 		}
 	}

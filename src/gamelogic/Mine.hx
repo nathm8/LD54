@@ -16,7 +16,6 @@ class Mine implements Placeable implements MessageListener {
     var animTime = 0.0;
     var spriteOne = true;
     public var side: Int;
-    var full = false;
     public var cost = [Triangle => true, Circle => false, Square => false];
 
     public function new(p: Planet) {
@@ -47,7 +46,7 @@ class Mine implements Placeable implements MessageListener {
     }
 
     public function update(dt: Float) {
-        if (!active || full) return;
+        if (!active || planet.surfaceResources[side] != null) return;
         time += dt;
         animTime += dt;
         if (animTime > ANIM_TIME) {
@@ -60,21 +59,17 @@ class Mine implements Placeable implements MessageListener {
         }
         if (time > MINING_TIME) {
             time -= MINING_TIME;
-            MessageManager.sendMessage(new SpawnResourceMessage(planet.resources[side], planet, side));
-            full = true;
+            MessageManager.send(new SpawnResourceMessage(planet.resources[side], planet, side));
+            planet.surfaceResources[side] = planet.resources[side];
         }
     }
 
     function demolish(e: hxd.Event) {
         active = false;
-        MessageManager.sendMessage(new DemolishPlaceableMessage(this));
+        MessageManager.send(new DemolishPlaceableMessage(this));
     }
 
     public function receiveMessage(msg:Message):Bool {
-        if (Std.isOfType(msg, PickUpResourceMessage)) {
-            var res = cast(msg, PickUpResourceMessage).resource;
-            if (res.planet == planet && res.side == side) full = false;
-        }
         return false;
     }
 

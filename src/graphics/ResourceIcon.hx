@@ -32,7 +32,7 @@ class ResourceIcon {
             var interactive = new Interactive(49, 49, sprite);
             interactive.x -= 49/2;
             interactive.y -= 49/2;
-            interactive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new DumpInventoryMessage(this));
+            interactive.onClick = (e: hxd.Event) -> MessageManager.send(new DumpInventoryMessage(this));
             interactive.cursor  = Button;
         }
     }

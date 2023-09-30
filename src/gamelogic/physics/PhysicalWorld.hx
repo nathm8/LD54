@@ -17,6 +17,6 @@ class PhysicalWorld {
     public static function update(dt: Float) {
         gameWorld.step(dt, 3, 3);
         gameWorld.clearForces();
-        MessageManager.sendMessage(new PhysicsStepDoneMessage());
+        MessageManager.send(new PhysicsStepDoneMessage());
     }
 }

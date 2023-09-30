@@ -45,7 +45,7 @@ class Resource implements MessageListener {
         var interactive = new Interactive(49, 49, sprite);
         interactive.x -= 49/2;
         interactive.y -= 49/2;
-        interactive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new ResourceClickedMessage(this));
+        interactive.onClick = (e: hxd.Event) -> MessageManager.send(new ResourceClickedMessage(this));
         interactive.cursor  = Button;
 
         MessageManager.addListener(this);

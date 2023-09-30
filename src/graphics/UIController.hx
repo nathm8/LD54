@@ -56,13 +56,13 @@ class UIController implements MessageListener {
                     break;
                 }
             }
-            MessageManager.sendMessage(new DropResourceMessage(res.type));
+            MessageManager.send(new DropResourceMessage(res.type));
         } if (Std.isOfType(msg, ShowMineMessage)) {
             sprite.tile = hxd.Res.img.UI1.toTile();
             var mineInteractive = new Interactive(120,120,sprite);
             mineInteractive.x = 37;
             mineInteractive.y = 52;
-            mineInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new MineClickedMessage());
+            mineInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new MineClickedMessage());
             mineInteractive.cursor = Button;
             costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
         } if (Std.isOfType(msg, ShowGunMessage)) {
@@ -70,7 +70,7 @@ class UIController implements MessageListener {
             var gunInteractive = new Interactive(120,120,sprite);
             gunInteractive.x = 174;
             gunInteractive.y = 52;
-            gunInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new GunClickedMessage());
+            gunInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new GunClickedMessage());
             gunInteractive.cursor = Button;
             costs[1] = new ResourceIcon(ui, Square, new Vector2D(237, 215));
         } if (Std.isOfType(msg, ShowAllMessage)) {
@@ -78,13 +78,13 @@ class UIController implements MessageListener {
             var beltInteractive = new Interactive(120,120,sprite);
             beltInteractive.x = 304;
             beltInteractive.y = 52;
-            beltInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new BeltClickedMessage());
+            beltInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new BeltClickedMessage());
             beltInteractive.cursor = Button;
             costs[2] = new ResourceIcon(ui, Circle, new Vector2D(373, 215));
             var rocketInteractive = new Interactive(120,120,sprite);
             rocketInteractive.x = 439;
             rocketInteractive.y = 52;
-            rocketInteractive.onClick = (e: hxd.Event) -> MessageManager.sendMessage(new RocketClickedMessage());
+            rocketInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new RocketClickedMessage());
             rocketInteractive.cursor = Button;
             costs[3] = new ResourceIcon(ui, Triangle, new Vector2D(466, 215));
             costs[4] = new ResourceIcon(ui, Square, new Vector2D(516, 215));

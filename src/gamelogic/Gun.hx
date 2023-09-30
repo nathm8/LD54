@@ -53,7 +53,7 @@ class Gun implements Placeable implements MessageListener {
 
     function demolish(e: hxd.Event) {
         active = false;
-        MessageManager.sendMessage(new DemolishPlaceableMessage(this));
+        MessageManager.send(new DemolishPlaceableMessage(this));
     }
 
     public function receiveMessage(msg:Message):Bool {

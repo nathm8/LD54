@@ -4,12 +4,14 @@ import gamelogic.Resource.ResourceType;
 import graphics.ResourceIcon;
 import utilities.Vector2D;
 import utilities.RNGManager;
+import utilities.MessageManager;
 import h2d.Graphics;
 import h2d.Layers;
 import h2d.Object;
 import gamelogic.Updateable;
+import utilities.Constants.normaliseTheta;
 
-class Planet implements Updateable {
+class Planet implements Updateable implements MessageListener {
 
     public var graphics: Graphics;
     public var sides: Int;
@@ -22,11 +24,15 @@ class Planet implements Updateable {
     var time = 0.0;
     public var position: Vector2D;
     public var resources = new Array<ResourceType>();
+    public var occupied = new Array<Bool>();
+    public var surfaceResources = new Array<ResourceType>();
 
     public function new(p: Object, o:Layers, s: Int, r: Float, d:Float, y:Float) {
         sides = s;
         orbitRadius = r;
         for (_ in 0...sides) resources.push(null);
+        for (_ in 0...sides) surfaceResources.push(null);
+        for (_ in 0...sides) occupied.push(false);
         planetRadius = 150 / (2*Math.sin(Math.PI/sides));
         day = d;
         dayElapsed = RNGManager.rand.rand()*day;
@@ -34,6 +40,7 @@ class Planet implements Updateable {
         yearElapsed = RNGManager.rand.rand()*year;
         initGraphics(p, o);
         update(0);
+        MessageManager.addListener(this);
     }
 
     function initGraphics(p: Object, o: Layers) {
@@ -66,6 +73,7 @@ class Planet implements Updateable {
 
     // from angle t, find which side is closest
     public function getClosestSide(t: Float): Int {
+        t = normaliseTheta(t);
         for (i in 0...sides) {
             var start = i*2*Math.PI/sides;
             var end = (i+1)*2*Math.PI/sides;
@@ -102,6 +110,15 @@ class Planet implements Updateable {
     public function getAngleOnSide(i: Int): Float {
         var v = getBuildingPositionOnSide(i);
         return v.angle() + Math.PI/2;
+    }
+
+    public function receiveMessage(msg:Message):Bool {
+        if (Std.isOfType(msg, SpawnResourceMessage)) {
+            var params = cast(msg, SpawnResourceMessage);
+            if (params.planet != this) return false;
+            surfaceResources[params.side] = params.type;
+        }
+        return false;
     }
 
 }

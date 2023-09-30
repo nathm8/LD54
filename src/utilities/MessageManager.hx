@@ -12,6 +12,7 @@ class Message {public function new(){}}
 
 class PhysicsStepDoneMessage extends Message {}
 class MineClickedMessage extends Message {}
+class BotClickedMessage extends Message {}
 class GunClickedMessage extends Message {}
 class BeltClickedMessage extends Message {}
 class RocketClickedMessage extends Message {}
@@ -99,7 +100,7 @@ class MessageManager {
 		listeners.remove(l);
     }
 
-    public static function sendMessage(msg: Message) {
+    public static function send(msg: Message) {
         for (l in listeners)
             if (l.receiveMessage(msg)) return;
 		// trace("unconsumed message", msg);
