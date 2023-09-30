@@ -3,6 +3,7 @@ package gamelogic;
 import h2d.Graphics;
 import gamelogic.Mine;
 import gamelogic.Updateable;
+import gamelogic.Resource.ResourceType;
 import graphics.TweenManager;
 import graphics.TweenManager.BotPlanetTravelTween;
 import utilities.MessageManager.Message;
@@ -15,6 +16,7 @@ enum State {
     None;
     PlacingMine;
     BotTravellingToResource;
+    PickingUp;
 }
 
 enum TutorialState {
@@ -73,10 +75,10 @@ class GameState implements MessageListener implements Updateable {
             }
         } if (Std.isOfType(msg, ResourceClickedMessage)) {
             var res = cast(msg, ResourceClickedMessage).resource;
+            trace("ResourceClickedMessage", state);
             if (state == None && res.planet == currentPlanet && canPickup()) {
                 var src = normaliseTheta(bot.theta);
                 var dst = normaliseTheta(currentPlanet.getAngleOnSide(res.side)-Math.PI/2);
-                trace(src, dst);
                 state = BotTravellingToResource;
                 if (src != dst) {
                     TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, src, dst, 0, 2));
@@ -88,6 +90,7 @@ class GameState implements MessageListener implements Updateable {
         } if (Std.isOfType(msg, DropResourceMessage)) {
             var params = cast(msg, DropResourceMessage);
             new Resource(params.resourceType, currentPlanet, currentPlanet.getClosestSide(bot.theta));
+            trace("drop", triangles, circles, squares);
             if (params.resourceType == Triangle) triangles -= 1;
             if (params.resourceType == Circle) circles -= 1;
             if (params.resourceType == Square) squares -= 1;
@@ -97,46 +100,77 @@ class GameState implements MessageListener implements Updateable {
         } if (Std.isOfType(msg, PickUpResourceMessage)) {
             if (state != BotTravellingToResource) return false;
             var res = cast(msg, PickUpResourceMessage).resource;
-            if (res.type == Triangle) {
-                triangles += 1;
+            if (res.type == Triangle)
                 TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
-            } if (res.type == Circle) {
-                circles += 1;
+            if (res.type == Circle)
                 TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
-            } if (res.type == Square) {
-                squares += 1;
+            if (res.type == Square)
                 TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
-            }
-            state = None;
+            state = PickingUp;
             TweenManager.add(new ParabolicMoveTween(res.sprite, new Vector2D(res.sprite.x, res.sprite.y), bot.position, 0, 0.5));
             TweenManager.add(new ParabolicScaleTween(res.sprite, 1.0, 0.0, 0, 0.5));
             TweenManager.add(new DelayedCallTween(() -> res.remove(), 0, 0.5));
+        } if (Std.isOfType(msg, DemolishPlaceableMessage)) {
+            trace("DemolishPlaceableMessage", state, canPickup());
+            var placeable = cast(msg, DemolishPlaceableMessage).placeable;
+            if (state != None || placeable.planet != currentPlanet || !canPickup()) return false;
+            var src = normaliseTheta(bot.theta);
+            var dst = normaliseTheta(currentPlanet.getAngleOnSide(placeable.side)-Math.PI/2);
+            trace(src, dst);
+            state = BotTravellingToResource;
+            if (src != dst) {
+                TweenManager.add(new BotPlanetTravelTween(bot, currentPlanet, src, dst, 0, 2));
+                TweenManager.add(new DelayedCallTween(() -> MessageManager.sendMessage(new PickUpPlaceableMessage(placeable)), 0, 2));
+            } else {
+                MessageManager.sendMessage(new PickUpPlaceableMessage(placeable));
+            }
+        } if (Std.isOfType(msg, PickUpPlaceableMessage)) {
+            var placeable = cast(msg, PickUpPlaceableMessage).placeable;
+            if (placeable.cost[Triangle])
+                TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
+            if (placeable.cost[Circle])
+                TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
+            if (placeable.cost[Square])
+                TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
+            state = PickingUp;
+            TweenManager.add(new ParabolicMoveTween(placeable.sprite, new Vector2D(placeable.sprite.x, placeable.sprite.y), bot.position, 0, 0.5));
+            TweenManager.add(new ParabolicScaleTween(placeable.sprite, 0.5, 0.0, 0, 0.5));
+            TweenManager.add(new DelayedCallTween(() -> placeable.remove(), 0, 0.5));
         }
 		return false;
 	}
 
     function getTriangle() {
+        trace("getTriangle");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Triangle));
         if (tutorialState == Start) {
             tutorialState = Mine;
             MessageManager.sendMessage(new ShowMineMessage());
         }
+        triangles += 1;
+        state = None;
     }
 
     function getSquare() {
+        trace("getSquare");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Square));
         // if (tutorialState == Start) {
         //     tutorialState = Mine;
         //     MessageManager.sendMessage(new ShowMineMessage());
         // }
+        squares += 1;
+        state = None;
     }
 
     function getCircle() {
+        trace("getCircle");
         MessageManager.sendMessage(new AddResourceToInventoryMessage(Circle));
         // if (tutorialState == Start) {
         //     tutorialState = Mine;
         //     MessageManager.sendMessage(new ShowMineMessage());
         // }
+        circles += 1;
+        state = None;
     }
 
     function canPickup() : Bool {

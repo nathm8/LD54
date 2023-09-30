@@ -21,7 +21,8 @@ class System implements Updateable {
         RNGManager.rand.shuffle(sides);
         // var radii = [50,100,150,200,250,300,350];
         for (i in 0...sides.length) {
-            var pl = new Planet(graphics, l, sides[i], 300*(i+3) + RNGManager.rand.random(100), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
+            var pl = new Planet(graphics, l, sides[i], 300*(i+3), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
+            // var pl = new Planet(graphics, l, sides[i], 300*(i+3) + RNGManager.rand.random(100), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
             planets.push(pl);
         }
     }
@@ -29,11 +30,11 @@ class System implements Updateable {
     function initGraphics(p: Object) {
         graphics = new Graphics(p);
         star1 = new Graphics(graphics);
-        star1.beginFill(0xAAAA00);
+        star1.beginFill(0xFFFF00);
         star1.drawCircle(0,0,300,3);
         
         star2 = new Graphics(graphics);
-        star2.beginFill(0xAAAA00);
+        star2.beginFill(0xFFFF00);
         star2.drawCircle(0,0,300,3);
         star2.rotate(Math.PI);
 

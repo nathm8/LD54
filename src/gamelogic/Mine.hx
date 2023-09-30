@@ -1,20 +1,23 @@
 package gamelogic;
 
 import h2d.Bitmap;
+import h2d.Interactive;
+import gamelogic.Resource.ResourceType;
 import utilities.Vector2D;
 import utilities.MessageManager;
 
 class Mine implements Placeable implements MessageListener {
     static final MINING_TIME = 5.0;
     static final ANIM_TIME = 0.5;
-    var sprite: Bitmap;
-    var planet: Planet;
+    public var sprite: Bitmap;
+    public var planet: Planet;
     var active = false;
     var time = 0.0;
     var animTime = 0.0;
     var spriteOne = true;
-    var side: Int;
+    public var side: Int;
     var full = false;
+    public var cost = [Triangle => true, Circle => false, Square => false];
 
     public function new(p: Planet) {
         planet = p;
@@ -32,9 +35,15 @@ class Mine implements Placeable implements MessageListener {
     }
 
     public function place(i: Int) {
-        active = true;
+        active = planet.resources[i] != null;
         sprite.alpha = 1;
         side = i;
+
+        var interactive = new Interactive(120, 120, sprite);
+        interactive.x -= 120/2;
+        interactive.y -= 120/2;
+        interactive.onClick = demolish;
+        interactive.cursor = Button;
     }
 
     public function update(dt: Float) {
@@ -56,11 +65,21 @@ class Mine implements Placeable implements MessageListener {
         }
     }
 
+    function demolish(e: hxd.Event) {
+        active = false;
+        MessageManager.sendMessage(new DemolishPlaceableMessage(this));
+    }
+
     public function receiveMessage(msg:Message):Bool {
         if (Std.isOfType(msg, PickUpResourceMessage)) {
             var res = cast(msg, PickUpResourceMessage).resource;
             if (res.planet == planet && res.side == side) full = false;
         }
         return false;
+    }
+
+    public function remove() {
+        sprite.remove();
+        active = false;
     }
 }

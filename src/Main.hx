@@ -1,5 +1,6 @@
 package;
 
+import utilities.MessageManager.MessageListener;
 import utilities.SoundManager;
 import gamelogic.GameScene;
 import gamelogic.physics.PhysicalWorld;

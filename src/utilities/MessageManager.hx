@@ -1,7 +1,9 @@
 package utilities;
 
+import gamelogic.Placeable;
 import hxd.Event;
 import gamelogic.Resource;
+import gamelogic.Mine;
 import gamelogic.Resource.ResourceType;
 import gamelogic.Planet;
 import graphics.ResourceIcon;
@@ -56,6 +58,14 @@ class RemoveResourceFromInventoryMessage extends Message {
 class DumpInventoryMessage extends Message {
 	public var resourceIcon: ResourceIcon;
 	public function new(r: ResourceIcon) {super(); resourceIcon = r;}
+}
+class DemolishPlaceableMessage extends Message {
+	public var placeable: Placeable;
+	public function new(r: Placeable) {super(); placeable = r;}
+}
+class PickUpPlaceableMessage extends Message {
+	public var placeable: Placeable;
+	public function new(r: Placeable) {super(); placeable = r;}
 }
 class SpawnResourceMessage extends Message {
 	public var planet: Planet;
