@@ -18,6 +18,7 @@ class GameScene extends Scene implements MessageListener {
 	var cameraController: CameraController;
 	var uiController: UIController;
 	var gameState: GameState;
+	var victoryScreen = false;
 	
 	public function new() {
 		super();
@@ -38,6 +39,7 @@ class GameScene extends Scene implements MessageListener {
 		updateables.push(bot);
 		
 		uiController = new UIController(this);
+		updateables.push(uiController);
 		gameState = new GameState(p, bot);
 		updateables.push(gameState);
 
@@ -60,6 +62,7 @@ class GameScene extends Scene implements MessageListener {
 
 	public function receiveMessage(msg:Message):Bool {
 		if (Std.isOfType(msg, MouseMoveMessage)) {
+			if (victoryScreen) return false;
 			var params = cast(msg, MouseMoveMessage);
 			if (params.event.relY < 750) {
 				interactiveCamera = cameraController.camera;
@@ -67,6 +70,11 @@ class GameScene extends Scene implements MessageListener {
 			else {
 				interactiveCamera = uiController.camera;
 			}
+		} if (Std.isOfType(msg, VictoryMessage)) {
+			victoryScreen = true;
+			interactiveCamera = uiController.camera;
+		} if (Std.isOfType(msg, ContinueMessage)) {
+			victoryScreen = false;
 		}
 		return false;
 	}

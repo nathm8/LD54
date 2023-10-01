@@ -42,6 +42,7 @@ class GameState implements MessageListener implements Updateable {
     var bot: Bot;
     var botGhost: Bitmap;
     var selection: Selection;
+    var rocketsLaunched = 0;
 
     // var graphics: Graphics;
     var updateables = new Array<Updateable>();
@@ -62,7 +63,10 @@ class GameState implements MessageListener implements Updateable {
     }
 
     public function receiveMessage(msg:Message):Bool {
-        if (Std.isOfType(msg, BotClickedMessage) && state == None) {
+        if (Std.isOfType(msg, RocketLaunchedMessage)) {
+            rocketsLaunched++;
+            if (rocketsLaunched == 1) MessageManager.send(new VictoryMessage());
+        } if (Std.isOfType(msg, BotClickedMessage) && state == None) {
             state = Moving;
             botGhost = new Bitmap(hxd.Res.img.BotBase.toTile().center(), currentPlanet.graphics);
             botGhost.alpha = 0.5;

@@ -96,20 +96,25 @@ class CountdownText implements Updateable {
         TweenManager.add(new ParabolicMoveTween(text, new Vector2D(100,-75), new Vector2D(100,-200), 0, 0.9));
         var exclaims = "";
         if (i == 10) {
-            exclaims = "!!!";
+            exclaims = "!!!!";
             text.scale(1.3);
             TweenManager.add(new ShakeTween(text, 16, 0, 0.9));
             text.textColor = 0xFF0000;
         } if (i == 9) {
-            exclaims = "!!";
+            exclaims = "!!!";
             text.scale(1.2);
             TweenManager.add(new ShakeTween(text, 8, 0, 0.9));
             text.textColor = 0xFC5F5F;
         } if (i == 8) {
-            exclaims = "!"; 
+            exclaims = "!!"; 
             text.scale(1.1);
             TweenManager.add(new ShakeTween(text, 2, 0, 0.9));
             text.textColor = 0xFC8888;
+        } if (i == 7) {
+            exclaims = "!"; 
+            text.scale(1.05);
+            TweenManager.add(new ShakeTween(text, 1, 0, 0.9));
+            text.textColor = 0xFAB1B1;
         }
 		text.text = Std.string(i)+exclaims;
     }

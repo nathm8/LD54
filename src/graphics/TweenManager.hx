@@ -81,6 +81,26 @@ class ParabolicMoveTween extends Tween {
 	}
 }
 
+class GlowInfiniteTween extends Tween {
+	var object:Object;
+	var reverse=false;
+
+	public function new(o:Object, te:Float, tt:Float) {
+		super(te, tt);
+		object = o;
+		kill = false;
+	}
+
+	override function update(dt:Float) {
+		dt = reverse ? -dt: dt;
+		super.update(dt);
+		if (timeElapsed < 0 || timeElapsed >= timeTotal)
+			reverse = !reverse;
+		var t = timeElapsed / timeTotal;
+		object.alpha = 0.5+0.5*t;
+	}
+}
+
 class ExponentialMoveTween extends Tween {
 	var obj: Object;
 	var start: Vector2D;

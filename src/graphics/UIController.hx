@@ -1,19 +1,27 @@
 package graphics;
 
+import h2d.Text;
+import gamelogic.Updateable;
 import h2d.Scene;
 import h2d.Graphics;
 import h2d.Bitmap;
 import h2d.Camera;
 import h2d.Interactive;
 import utilities.MessageManager;
+import graphics.TweenManager;
 import utilities.Vector2D;
 
-class UIController implements MessageListener {
+class UIController implements MessageListener implements Updateable {
     var ui: Graphics;
     public var camera: Camera;
     var inventory: Array<ResourceIcon> = [null, null, null];
     var costs: Array<ResourceIcon> = [null, null, null, null, null, null];
     var sprite: Bitmap;
+    var rocketsLaunched = 1;
+    var time = 0.0;
+    var rocketsText: Text;
+    var timeText: Text;
+    var rocketsPerSecond: Text;
 
     public function new(s: Scene) {
         ui = new Graphics();
@@ -27,6 +35,89 @@ class UIController implements MessageListener {
         sprite = new Bitmap(hxd.Res.img.UI0.toTile(), ui);
 
         MessageManager.addListener(this);
+
+        timeText= new h2d.Text(hxd.res.DefaultFont.get(), ui);
+		timeText.smooth = false;
+		timeText.scale(2);
+		timeText.textAlign = Left;
+        timeText.textColor = 0xDDDDDD;
+        timeText.x = 25;
+        timeText.y = -725;
+
+        rocketsText= new h2d.Text(hxd.res.DefaultFont.get(), timeText);
+		rocketsText.smooth = false;
+		rocketsText.textAlign = Left;
+        rocketsText.textColor = 0xDDDDDD;
+        rocketsText.y = 25;
+
+        rocketsPerSecond= new h2d.Text(hxd.res.DefaultFont.get(), rocketsText);
+		rocketsPerSecond.smooth = false;
+		rocketsPerSecond.textAlign = Left;
+        rocketsPerSecond.textColor = 0xDDDDDD;
+        rocketsPerSecond.y = 25;
+
+        rocketsText.visible = false;
+        timeText.visible = false;
+        rocketsPerSecond.visible = false;
+    }
+
+    function victory() {
+        var splash = new Bitmap(hxd.Res.img.VictorySplash.toTile().center(), ui);
+        splash.x = 500;
+        splash.y = -300;
+        splash.color = new h3d.Vector(0.2,0.2,0.2,1);
+
+        var title= new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		title.smooth = false;
+		title.scale(7);
+		title.textAlign = Center;
+        title.textColor = 0xDDDDDD;
+        title.x = 0;
+        title.y = -220;
+        title.text = "You have Won!";
+
+        var bot = new Bitmap(hxd.Res.img.BotBase.toTile().center(), splash);
+        bot.x = 0;
+        bot.y = -45;
+        bot.scale(2);
+        var face = new Bitmap(hxd.Res.img.BotHappy2.toTile().center(), bot);
+
+        var text = new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		text.smooth = false;
+		text.scale(4);
+		text.textAlign = Center;
+        text.textColor = 0xBBBBBB;
+        text.x = 0;
+        text.y = 25;
+        text.text = "";
+
+        var continueButton = new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		continueButton.smooth = false;
+		continueButton.scale(5);
+		continueButton.textAlign = Center;
+        continueButton.textColor = 0xDDDDDD;
+        continueButton.x = 0;
+        continueButton.y = 120;
+        continueButton.text = "Continue";
+        continueButton.visible = false;
+        TweenManager.add(new GlowInfiniteTween(continueButton, 0, 1.5));
+
+        var interactive = new Interactive(continueButton.getBounds().width, continueButton.getBounds().height, continueButton);
+        interactive.x = -continueButton.getBounds().width/2;
+        interactive.y = -continueButton.getBounds().height/2;
+        interactive.onClick = (e: hxd.Event) -> {splash.remove(); showRocketStats();}
+
+        TweenManager.add(new DelayedCallTween(()->text.text=".",0,1));
+        TweenManager.add(new DelayedCallTween(()->text.text="..",0,2));
+        TweenManager.add(new DelayedCallTween(()->text.text="...",0,3));
+        TweenManager.add(new DelayedCallTween(()->{text.text="...Would you like to win more?";continueButton.visible=true;face.tile = hxd.Res.img.BotSmug.toTile().center();},0,4.5));
+    }
+
+    function showRocketStats(){
+        MessageManager.send(new ContinueMessage());
+        rocketsText.visible = true;
+        timeText.visible = true;
+        rocketsPerSecond.visible = true;
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -38,6 +129,10 @@ class UIController implements MessageListener {
                     break;
                 }
             }
+        } if (Std.isOfType(msg, VictoryMessage)) {
+            victory();
+        } if (Std.isOfType(msg, RocketLaunchedMessage)) {
+                rocketsLaunched++;
         } if (Std.isOfType(msg, RemoveResourceFromInventoryMessage)) {
             var res = cast(msg, RemoveResourceFromInventoryMessage).resourceType;
             for (i in 0...3) {
@@ -146,5 +241,16 @@ class UIController implements MessageListener {
             costs[1].darken();
         if (costs[4] != null)
             costs[4].darken();
+    }
+
+    public function update(dt: Float) {
+        time += dt;
+
+        timeText.text = "Time: "+Std.string(Math.round(time));
+        rocketsText.text = "Rockets: "+Std.string(rocketsLaunched);
+        var s = Std.string(rocketsLaunched/time);
+        var i = s.indexOf(".");
+        s = s.substring(0,i+2);
+        rocketsPerSecond.text = "Rockets\\s: "+s;
     }
 }
