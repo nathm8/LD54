@@ -55,7 +55,7 @@ class ResourceClickedMessage extends Message {
 	public var resource: Resource;
 	public function new(r: Resource) {super(); resource = r;}
 }
-class PickUpResourceMessage extends Message {
+class BotPickUpResourceMessage extends Message {
 	public var resource: Resource;
 	public function new(r: Resource) {super(); resource = r;}
 }

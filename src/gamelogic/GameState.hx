@@ -33,9 +33,12 @@ enum TutorialState {
 
 class GameState implements MessageListener implements Updateable {
 
-    var circles = 1;
-    var triangles = 1;
-    var squares = 1;
+    // var circles = 1;
+    // var triangles = 1;
+    // var squares = 1;
+    var circles = 0;
+    var triangles = 0;
+    var squares = 0;
     var state = None;
     var tutorialState = Start;
     var currentPlanet: Planet;
@@ -56,10 +59,10 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        MessageManager.send(new ShowMineMessage());
-        MessageManager.send(new ShowGunMessage());
-        MessageManager.send(new ShowAllMessage());
-        tutorialState = Done;
+        // MessageManager.send(new ShowMineMessage());
+        // MessageManager.send(new ShowGunMessage());
+        // MessageManager.send(new ShowAllMessage());
+        // tutorialState = Done;
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -75,6 +78,13 @@ class GameState implements MessageListener implements Updateable {
             if (triangles > 0 && state == None) {
                 state = Placing;
                 var m = new Mine(currentPlanet);
+                placing = m;
+                updateables.push(m);
+            }
+		} if (Std.isOfType(msg, BeltClickedMessage)) {
+            if (circles > 0 && state == None) {
+                state = Placing;
+                var m = new Belt(currentPlanet);
                 placing = m;
                 updateables.push(m);
             }
@@ -163,29 +173,23 @@ class GameState implements MessageListener implements Updateable {
                 state = Travelling;
                 if (currentPlanet.getClosestSide(bot.theta) != res.side) {
                     bot.moveTo(currentPlanet.getAngleOnSide(res.side)-Math.PI/2);
-                    TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new PickUpResourceMessage(res)), 0, 1.5));
+                    TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new BotPickUpResourceMessage(res)), 0, 1.5));
                 } else
-                    MessageManager.send(new PickUpResourceMessage(res));
+                    MessageManager.send(new BotPickUpResourceMessage(res));
             }
         } if (Std.isOfType(msg, DropResourceMessage)) {
             var params = cast(msg, DropResourceMessage);
-            new Resource(params.resourceType, currentPlanet, currentPlanet.getClosestSide(bot.theta));
-            if (params.resourceType == Triangle) triangles -= 1;
-            if (params.resourceType == Circle) circles -= 1;
-            if (params.resourceType == Square) squares -= 1;
-        } if (Std.isOfType(msg, SpawnResourceMessage)) {
-            var params = cast(msg, SpawnResourceMessage);
-            new Resource(params.type, params.planet, params.side);
-        } if (Std.isOfType(msg, PickUpResourceMessage)) {
+            MessageManager.send(new SpawnResourceMessage(params.resourceType, currentPlanet, currentPlanet.getClosestSide(bot.theta)));
+            decrementResource(params.resourceType);
+        } if (Std.isOfType(msg, BotPickUpResourceMessage)) {
             if (state != Travelling) return false;
-            var res = cast(msg, PickUpResourceMessage).resource;
+            var res = cast(msg, BotPickUpResourceMessage).resource;
             if (res.type == Triangle)
                 TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
             if (res.type == Circle)
                 TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
             if (res.type == Square)
                 TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
-            currentPlanet.surfaceResources[res.side] = null;
             state = PickingUp;
             TweenManager.add(new ParabolicMoveTween(res.sprite, new Vector2D(res.sprite.x, res.sprite.y), bot.position, 0, 0.5));
             TweenManager.add(new ParabolicScaleTween(res.sprite, 1.0, 0.0, 0, 0.5));
@@ -201,12 +205,14 @@ class GameState implements MessageListener implements Updateable {
                 MessageManager.send(new PickUpPlaceableMessage(placeable));
         } if (Std.isOfType(msg, PickUpPlaceableMessage)) {
             var placeable = cast(msg, PickUpPlaceableMessage).placeable;
-            if (placeable.cost[Triangle])
-                TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
-            if (placeable.cost[Circle])
-                TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
-            if (placeable.cost[Square])
-                TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
+            if (canPickup()) {
+                if (placeable.cost[Triangle])
+                    TweenManager.add(new DelayedCallTween(getTriangle, 0, 0.5));
+                if (placeable.cost[Circle])
+                    TweenManager.add(new DelayedCallTween(getCircle, 0, 0.5));
+                if (placeable.cost[Square])
+                    TweenManager.add(new DelayedCallTween(getSquare, 0, 0.5));
+            } 
             state = PickingUp;
             currentPlanet.occupied[placeable.side] = false;
             TweenManager.add(new ParabolicMoveTween(placeable.sprite, new Vector2D(placeable.sprite.x, placeable.sprite.y), bot.position, 0, 0.5));

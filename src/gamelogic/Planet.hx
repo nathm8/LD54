@@ -123,11 +123,18 @@ class Planet implements Updateable implements MessageListener {
     }
 
     public function getBuildingPositionOnSide(i: Int, pl: Placeable): Vector2D {
-        var m = sides == 4 ? 0 : 20;
-        if (Std.isOfType(pl, Rocket)) m -= 60;
-        var v1 = new Vector2D(planetRadius+70-m, 0).rotate(i/sides*2*Math.PI); 
+        var offset = 0.0;
+        if (sides == 3) {
+            if (Std.isOfType(pl, Mine)) offset += 5;
+            if (Std.isOfType(pl, Rocket)) offset -= 44;
+        } else {
+            offset = 17;
+            if (Std.isOfType(pl, Mine)) offset += 8;
+            if (Std.isOfType(pl, Rocket)) offset -= 30;
+        }
+        var v1 = new Vector2D(planetRadius+70-offset, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
-        var v2 = new Vector2D(planetRadius+70-m, 0).rotate((i+1)/sides*2*Math.PI); 
+        var v2 = new Vector2D(planetRadius+70-offset, 0).rotate((i+1)/sides*2*Math.PI); 
         return (v1 + v2)/2;
     }
 
@@ -139,9 +146,11 @@ class Planet implements Updateable implements MessageListener {
     }
 
     public function getResourcePositionOnSide(i: Int): Vector2D {
-        var v1 = new Vector2D(planetRadius+40, 0).rotate(i/sides*2*Math.PI); 
+        var offset = 0.0;
+        if (sides == 4) offset = 5;
+        var v1 = new Vector2D(planetRadius+40-offset, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
-        var v2 = new Vector2D(planetRadius+40, 0).rotate((i+1)/sides*2*Math.PI); 
+        var v2 = new Vector2D(planetRadius+40-offset, 0).rotate((i+1)/sides*2*Math.PI); 
         return (v1*0.4 + v2*0.6);
     }
 
@@ -154,7 +163,17 @@ class Planet implements Updateable implements MessageListener {
         if (Std.isOfType(msg, SpawnResourceMessage)) {
             var params = cast(msg, SpawnResourceMessage);
             if (params.planet != this) return false;
+            if (surfaceResources[params.side] != null) return false;
             surfaceResources[params.side] = params.type;
+            new Resource(params.type, params.planet, params.side);
+        } if (Std.isOfType(msg, BotPickUpResourceMessage)) {
+            var res = cast(msg, BotPickUpResourceMessage).resource;
+            if (res.planet != this) return false;
+            if (surfaceResources[res.side] != res.type) {
+                trace("bad pickup");
+                throw(1);
+            }
+            surfaceResources[res.side] = null;
         }
         return false;
     }

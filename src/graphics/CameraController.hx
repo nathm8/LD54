@@ -52,6 +52,8 @@ class CameraController implements Updateable implements MessageListener {
             camera.y = p.y - 50;
             camera.rotation = -target.rotation;
             camera.layerVisible = (layer) -> layer == 0;
+            camera.scaleX = 1.0;
+            camera.scaleY = 1.0;
             // camera.rotation = -target.graphics.rotation - Math.PI + Math.PI/6;
         } else if (focus == System) {
             camera.x = 500;
@@ -60,6 +62,8 @@ class CameraController implements Updateable implements MessageListener {
             camera.scaleY = 0.17;
             camera.layerVisible = (layer) -> layer == 0 || layer == 2;
         } else {
+            camera.scaleX = 1.0;
+            camera.scaleY = 1.0;
             var p = target.getAbsPos().getPosition();
             camera.x = p.x;
             camera.y = p.y - 50;

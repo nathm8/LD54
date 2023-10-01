@@ -68,6 +68,7 @@ class Rocket implements Placeable implements MessageListener {
     }
 
     function demolish(e: hxd.Event) {
+        active = false;
         MessageManager.send(new DemolishPlaceableMessage(this));
     }
 

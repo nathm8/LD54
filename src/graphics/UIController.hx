@@ -17,7 +17,7 @@ class UIController implements MessageListener implements Updateable {
     var inventory: Array<ResourceIcon> = [null, null, null];
     var costs: Array<ResourceIcon> = [null, null, null, null, null, null];
     var sprite: Bitmap;
-    var rocketsLaunched = 1;
+    var rocketsLaunched = 0;
     var time = 0.0;
     var rocketsText: Text;
     var timeText: Text;
