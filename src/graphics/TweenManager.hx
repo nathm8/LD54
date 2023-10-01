@@ -46,6 +46,22 @@ class FadeTween extends Tween {
 	}
 }
 
+
+class SpinTween extends Tween {
+	var obj:Object;
+
+	public function new(o:Object, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o;
+	}
+
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		obj.rotate(Math.PI/50);
+	}
+}
+
 class ParabolicMoveTween extends Tween {
 	var obj: Object;
 	var start: Vector2D;
@@ -210,6 +226,32 @@ class BotPlanetTravelTween extends Tween {
 		super.update(dt);
 		var t = timeElapsed / timeTotal;
 		bot.theta = (1-t)*thetaStart + t*thetaEnd;
+	}
+}
+
+class LaunchTween extends Tween {
+	var object:Object;
+	var planet:Planet;
+	var start: Vector2D;
+
+	public function new(o:Object, p: Planet, s:Vector2D, te:Float, tt:Float) {
+		super(te, tt);
+		object = o;
+		planet = p;
+		start = s;
+	}
+
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		t = Math.pow(2, t)-1;
+
+		var dst_global_pos = planet.graphics.localToGlobal();
+		var target = new Vector2D(dst_global_pos.x, dst_global_pos.y);
+
+		var v = (1-t)*start + t*target;
+		object.x = v.x;
+		object.y = v.y;
 	}
 }
 

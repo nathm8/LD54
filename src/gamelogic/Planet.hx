@@ -14,6 +14,9 @@ import utilities.Constants.normaliseTheta;
 
 class Planet implements Updateable implements MessageListener {
 
+    static var maxID = 0;
+    public var id: Int;
+
     public var graphics: Graphics;
     public var sides: Int;
     var orbitRadius: Float;
@@ -29,6 +32,7 @@ class Planet implements Updateable implements MessageListener {
     public var surfaceResources = new Array<ResourceType>();
 
     public function new(p: Object, o:Layers, s: Int, r: Float, d:Float, y:Float) {
+        id = maxID++;
         sides = s;
         orbitRadius = r;
         for (_ in 0...sides) resources.push(null);
@@ -43,6 +47,11 @@ class Planet implements Updateable implements MessageListener {
         update(0);
         initInteractive();
         MessageManager.addListener(this);
+        //DEBUG
+        // var text = new h2d.Text(hxd.res.DefaultFont.get(), graphics);
+		// text.smooth = false;
+		// text.scale(5);
+		// text.text = Std.string(id);
     }
 
     function initInteractive() {

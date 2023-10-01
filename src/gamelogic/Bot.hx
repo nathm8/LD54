@@ -23,6 +23,7 @@ class Bot implements Updateable implements MessageListener {
     var faceTime = 1.0;
     var waking = 0;
 
+
     public function new(p: Planet) {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.BotBase.toTile().center(), p.graphics);
@@ -103,5 +104,9 @@ class Bot implements Updateable implements MessageListener {
             faceTime = 1.0;
         }
         return false;
+    }
+
+    public function remove() {
+        sprite.remove();
     }
 }

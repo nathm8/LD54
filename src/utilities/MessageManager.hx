@@ -1,5 +1,6 @@
 package utilities;
 
+import h2d.Object;
 import gamelogic.Placeable;
 import hxd.Event;
 import gamelogic.Resource;
@@ -74,6 +75,12 @@ class DumpInventoryMessage extends Message {
 class PlacedGunClickedMessage extends Message {
 	public var gun: Gun;
 	public function new(r: Gun) {super(); gun = r;}
+}
+class BotViewMessage extends Message {
+	public var object: Object;
+	public var transitTime: Float;
+	public var planet: Planet;
+	public function new(r: Object, t: Float, p: Planet) {super(); object = r; transitTime = t; planet = p;}
 }
 class DemolishPlaceableMessage extends Message {
 	public var placeable: Placeable;

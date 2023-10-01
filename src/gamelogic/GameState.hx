@@ -78,10 +78,8 @@ class GameState implements MessageListener implements Updateable {
                 updateables.push(m);
             }
 		} if (Std.isOfType(msg, PlanetFocusedMessage)) {
-            trace(state);
             if (state != Aiming) return false;
             var planet = cast(msg, PlanetFocusedMessage).planet;
-            trace("planet focused");
             if (selection != null)
                 selection.remove();
             selection = new Selection(planet.graphics);
@@ -90,6 +88,7 @@ class GameState implements MessageListener implements Updateable {
             var planet = cast(msg, PlanetClickedMessage).planet;
             selection.remove();
             selection = null;
+            launchBot(planet);
 		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
             var gun = cast(msg, PlacedGunClickedMessage).gun;
             if (state == None)
@@ -246,5 +245,27 @@ class GameState implements MessageListener implements Updateable {
 
     public function update(dt: Float) {
         for (u in updateables) u.update(dt);
+    }
+
+    function launchBot(target: Planet) {
+        var src_local_pos = bot.position;
+        var src_global_pos = bot.sprite.localToGlobal(bot.position);
+        var start = new Vector2D(src_global_pos.x, src_global_pos.y);
+        var dst_global_pos = target.graphics.localToGlobal();
+        var end = new Vector2D(dst_global_pos.x, dst_global_pos.y);
+        
+        bot.remove();
+        bot = null;
+        var launchedBot = new Bitmap(hxd.Res.img.BotScared.toTile().center(), currentPlanet.graphics.getScene());
+        launchedBot.x = start.x; launchedBot.y = start.y;
+        var t = (start - end).magnitude/90;
+        t = t < 0.3 ? 0.3 : t;
+        
+        TweenManager.add(new LaunchTween(launchedBot, target, start, 0, t));
+        TweenManager.add(new SpinTween(launchedBot, 0, t));
+        MessageManager.send(new BotViewMessage(launchedBot, t, target));
+
+        
+
     }
 }

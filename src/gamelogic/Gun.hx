@@ -37,10 +37,10 @@ class Gun implements Placeable implements MessageListener {
     public function place(i: Int) {
         sprite.alpha = 1;
         side = i;
-
-        var interactive = new Interactive(130, 130, sprite);
-        interactive.x = -130/2;
-        interactive.y = -130/2;
+        
+        var interactive = new Interactive(120, 120, sprite);
+        interactive.x -= 120/2;
+        interactive.y -= 120/2;
         interactive.onClick = handleClick;
         interactive.cursor = Button;
     }
