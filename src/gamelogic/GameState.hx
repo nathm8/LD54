@@ -35,7 +35,7 @@ class GameState implements MessageListener implements Updateable {
 
     var circles = 0;
     var triangles = 0;
-    var squares = 1;
+    var squares = 0;
     var state = None;
     var tutorialState = Start;
     var currentPlanet: Planet;
@@ -55,7 +55,7 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        MessageManager.send(new ShowGunMessage());
+        // MessageManager.send(new ShowGunMessage());
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -96,6 +96,7 @@ class GameState implements MessageListener implements Updateable {
             } else {
                 state = Launching;
                 launchBot(planet);
+                MessageManager.send(new BotLaunchedMessage(currentPlanet));
             }
 		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
             var gun = cast(msg, PlacedGunClickedMessage).gun;

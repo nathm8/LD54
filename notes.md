@@ -1,12 +1,3 @@
-38, 52
-99, 52
-151, 52
-215, 52
-
-665, 53
-665, 123
-665, 193
-
 Names Ideas
 ==============
 Fac Spatium
@@ -15,15 +6,13 @@ TODO
 ==============
 MVP
 --------------
-Implement placing Gun
-Gun transporting Resources
-Gun transporting Bot
 Implement placing Rocket
-Fuelling Rocket
 Implement Rocket takeoff
 Show Victory screen
 Implement placing belt
 Implement belt moving resources
+Resupplying Rocket
+Gun transporting Resources
 Show Defeat screen
 
 Polish

@@ -17,9 +17,11 @@ class Planet implements Updateable implements MessageListener {
     static var maxID = 0;
     public var id: Int;
 
+    public var starting = false;
     public var graphics: Graphics;
     public var sides: Int;
     var orbitRadius: Float;
+    var minimapView: Graphics;
     public var planetRadius: Float;
     var day: Float;
     var dayElapsed = 0.0;
@@ -70,6 +72,9 @@ class Planet implements Updateable implements MessageListener {
         orbit.drawCircle(500, 500, orbitRadius);
         o.add(orbit, 2);
 
+        minimapView = new Graphics();
+        o.add(minimapView, 2);
+
         graphics = new Graphics(p);
         graphics.beginFill(0x007700);
         graphics.drawCircle(0, 0, planetRadius, sides);
@@ -85,11 +90,20 @@ class Planet implements Updateable implements MessageListener {
         graphics.x = position.x;
         graphics.y = position.y;
         graphics.rotation = rot;
+
+        minimapView.x = position.x + 500;
+        minimapView.y = position.y + 500;
+        minimapView.rotation = rot;
     }
 
     public function placeResource(t: ResourceType, i: Int) {
         resources[i] = t;
         var res = new ResourceIcon(graphics, t, getUndergroundResourcePositionOnSide(i), true);
+        res.sprite.rotation = getAngleOnSide(i);
+
+        var map_icon = new ResourceIcon(minimapView, t, getBuildingPositionOnSide(i), true);
+        map_icon.sprite.rotation = getAngleOnSide(i);
+        map_icon.sprite.scale(4);
     }
 
     // from angle t, find which side is closest

@@ -34,7 +34,7 @@ class GameScene extends Scene implements MessageListener {
 		removeCamera(cameras[0]);
 		updateables.push(cameraController);
 		
-		var bot = new Bot(p);
+		var bot = new Bot(p, true);
 		updateables.push(bot);
 		
 		uiController = new UIController(this);

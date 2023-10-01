@@ -7,7 +7,7 @@ import utilities.Vector2D;
 import utilities.MessageManager;
 
 class Mine implements Placeable implements MessageListener {
-    static final MINING_TIME = 5.0;
+    static final MINING_TIME = 3.0;
     static final ANIM_TIME = 0.5;
     public var sprite: Bitmap;
     public var planet: Planet;

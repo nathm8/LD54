@@ -6,6 +6,7 @@ import gamelogic.Resource.ResourceType;
 import utilities.Vector2D;
 import utilities.MessageManager;
 import utilities.Constants.normaliseTheta;
+import graphics.TweenManager;
 
 class Gun implements Placeable implements MessageListener {
     public var sprite: Bitmap;
@@ -37,7 +38,7 @@ class Gun implements Placeable implements MessageListener {
     public function place(i: Int) {
         sprite.alpha = 1;
         side = i;
-        
+
         var interactive = new Interactive(120, 120, sprite);
         interactive.x -= 120/2;
         interactive.y -= 120/2;
@@ -53,6 +54,9 @@ class Gun implements Placeable implements MessageListener {
     }
 
     public function receiveMessage(msg:Message):Bool {
+        if (Std.isOfType(msg, BotLaunchedMessage)) {
+            TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new LinearRotationTween(turret, -Math.PI/2, 0, 0, 2.0)), 0, 2.0));
+        }
         return false;
     }
 
