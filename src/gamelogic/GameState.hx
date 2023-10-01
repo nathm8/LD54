@@ -344,7 +344,6 @@ class GameState implements MessageListener implements Updateable {
     }
 
     function launchBot(target: Planet) {
-        var src_local_pos = bot.position;
         var src_global_pos = bot.sprite.localToGlobal(bot.position);
         var start = new Vector2D(src_global_pos.x, src_global_pos.y);
         var dst_global_pos = target.graphics.localToGlobal();

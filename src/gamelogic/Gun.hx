@@ -12,14 +12,16 @@ class Gun implements Placeable implements MessageListener {
     public var sprite: Bitmap;
     public var turret: Bitmap;
     public var planet: Planet;
-    var time = 0.0;
     public var side: Int;
     public var cost = [Triangle => false, Circle => false, Square => true];
     var targetIcon: Bitmap;
     var targeting = false;
     var hasTarget = false;
-    var target: Planet;
+    var targetPlanet: Planet;
     var targetSide: Int;
+
+    var time = 3.0;
+    static final FIRING_TIME = 3.0;
 
     public function new(p: Planet) {
         planet = p;
@@ -59,6 +61,39 @@ class Gun implements Placeable implements MessageListener {
     }
 
     public function update(dt: Float) {
+        if (!hasTarget) return;
+        time -= dt;
+        if (time <= 0) {
+            time = FIRING_TIME;
+            if (planet.surfaceResources[side] != null) {
+                MessageManager.send(new RocketConsumedResourceMessage(planet, side));
+                var src_global_pos = sprite.localToGlobal(new Vector2D(sprite.x, sprite.y));
+                var start = new Vector2D(src_global_pos.x, src_global_pos.y);
+                var dst_global_pos = targetPlanet.graphics.localToGlobal(targetPlanet.getResourcePositionOnSide(targetSide));
+                var end = new Vector2D(dst_global_pos.x, dst_global_pos.y);
+
+                var launchedRes: Bitmap;
+                var type = planet.surfaceResources[side];
+                if (type == Triangle) {
+                    launchedRes = new Bitmap(hxd.Res.img.Triangle.toTile().center(), sprite.getScene());
+                    launchedRes.color = new h3d.Vector(0.8,0,0,1);
+                } else if (type == Square){
+                    launchedRes = new Bitmap(hxd.Res.img.Square.toTile().center(), sprite.getScene());
+                    launchedRes.color = new h3d.Vector(0,0.8,0,1);
+                } else {
+                    launchedRes = new Bitmap(hxd.Res.img.Circle.toTile().center(), sprite.getScene());
+                    launchedRes.color = new h3d.Vector(0,0,0.8,1);
+                }
+                launchedRes.x = start.x; launchedRes.y = start.y;
+
+                var t = (start - end).magnitude/900;
+                t = t < 0.3 ? 0.3 : t;
+
+                TweenManager.add(new LaunchTween(launchedRes, targetPlanet, start, 0, t));
+                TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new SpawnResourceMessage(type, targetPlanet, targetSide)), 0, t));
+                TweenManager.add(new DelayedCallTween(() -> launchedRes.remove(), 0, t));
+            }
+        }
     }
 
     function handleClick(e: hxd.Event) {
@@ -73,7 +108,7 @@ class Gun implements Placeable implements MessageListener {
         } if (Std.isOfType(msg, GunTargetAcquired)) {
             if (!targeting) return false;
             var params = cast(msg, GunTargetAcquired);
-            target = params.planet;
+            targetPlanet = params.planet;
             targetSide = params.side;
             hasTarget = true;
         }
