@@ -83,21 +83,17 @@ class CameraController implements Updateable implements MessageListener {
             var planet = cast(msg, BotViewMessage).planet.graphics;
             TweenManager.add(new CameraZoomTween(camera, 0.17, 1.0, 0, 0.25));
             var p = target.getAbsPos().getPosition();
-            TweenManager.add(new CameraMoveTween(camera, new Vector2D(500, 1150), new Vector2D(p.x, p.y), 0, 0.25));
+            TweenManager.add(new CameraTrackingMoveTween(camera, new Vector2D(500, 1150), target, 0, 0.25));
             TweenManager.add(new DelayedCallTween(() -> focus = Bot, 0, 0.25));
             TweenManager.add(new DelayedCallTween(() -> focus = Planet, 0, t));
             TweenManager.add(new DelayedCallTween(() -> target = planet, 0, t));
-            
-            TweenManager.add(new DelayedCallTween(() -> {var p = planet.getAbsPos().getPosition(); TweenManager.add(new CameraMoveTween(camera, new Vector2D(camera.x, camera.y), new Vector2D(p.x, p.y), 0, 1));}, 0, t));
-            TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new CameraRotateTween(camera, camera.rotation, -planet.rotation, 0, 1)), 0, t));
-            
         } if (Std.isOfType(msg, PlanetViewMessage)) {
             var planet = cast(msg, PlanetViewMessage).planet.graphics;
             target = planet;
             var p = target.getAbsPos().getPosition();
             TweenManager.add(new CameraZoomTween(camera, 0.17, 1.0, 0, 3));
-            TweenManager.add(new CameraMoveTween(camera, new Vector2D(camera.x, camera.y), new Vector2D(p.x, p.y), 0, 3));
-            TweenManager.add(new CameraRotateTween(camera, camera.rotation, -target.rotation, 0, 3));
+            TweenManager.add(new CameraTrackingMoveTween(camera, new Vector2D(camera.x, camera.y), planet, 0, 3));
+            TweenManager.add(new CameraTrackingRotateTween(camera, camera.rotation, planet, 0, 3));
             TweenManager.add(new DelayedCallTween(() -> focus = Planet, 0, 3));
         }
         return false;

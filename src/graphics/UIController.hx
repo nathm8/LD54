@@ -236,7 +236,7 @@ class UIController implements MessageListener implements Updateable {
             rocketInteractive.cursor = Button;
             costs[3] = new ResourceIcon(ui, Triangle, new Vector2D(456, 215), true);
             costs[4] = new ResourceIcon(ui, Square, new Vector2D(506, 215), true);
-            costs[5] = new ResourceIcon(ui, Circle, new Vector2D(556, 215), true);
+            costs[5] = new ResourceIcon(ui, Circle, new Vector2D(560, 215), true);
         } if (Std.isOfType(msg, DarkenTrianglesMessage)) {
             darkenTriangles();
         } if (Std.isOfType(msg, BrightenTrianglesMessage)) {

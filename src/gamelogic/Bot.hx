@@ -28,6 +28,7 @@ class Bot implements Updateable implements MessageListener {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.BotBase.toTile().center(), p.graphics);
         face = new Bitmap(hxd.Res.img.BotWake1.toTile().center(), sprite);
+        face.filter = new h2d.filter.Bloom(2,2,10,1.2,5);
         theta = -Math.PI/2;
         waking = gameStart? 0 : 5;
         var interactive = new Interactive(104,48,sprite);

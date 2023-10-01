@@ -15,15 +15,17 @@ class Gun implements Placeable implements MessageListener {
     var time = 0.0;
     public var side: Int;
     public var cost = [Triangle => false, Circle => false, Square => true];
+    var target: Bitmap;
 
     public function new(p: Planet) {
         planet = p;
-        sprite = new Bitmap(hxd.Res.img.GunBase.toTile().center());
+        sprite = new Bitmap(hxd.Res.img.GunBase.toTile().center(), p.graphics);
+        target = new Bitmap(hxd.Res.img.Target.toTile().center(), sprite);
+        target.y = 75;
         var t = hxd.Res.img.GunTurret.toTile();
         t.setCenterRatio(1.0/3.0,49.0/120.0);
         turret = new Bitmap(t, sprite);
         turret.y = -31;
-        p.graphics.addChildAt(sprite, 0);
         sprite.alpha = 0.5;
         sprite.scale(0.75);
         MessageManager.addListener(this);
@@ -39,10 +41,16 @@ class Gun implements Placeable implements MessageListener {
         sprite.alpha = 1;
         side = i;
 
-        var interactive = new Interactive(200, 200, sprite);
-        interactive.x -= 200/2;
-        interactive.y -= 200/2;
+        var interactive = new Interactive(64, 98, sprite);
+        interactive.x -= 64/2;
+        interactive.y -= 98/2;
         interactive.onClick = handleClick;
+        interactive.cursor = Button;
+
+        interactive = new Interactive(37, 37, target);
+        interactive.x -= 37/2;
+        interactive.y -= 37/2;
+        interactive.onClick = (e: hxd.Event) -> MessageManager.send(new GunTargetingMessage());
         interactive.cursor = Button;
     }
 

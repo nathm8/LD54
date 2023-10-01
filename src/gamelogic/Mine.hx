@@ -21,8 +21,7 @@ class Mine implements Placeable implements MessageListener {
 
     public function new(p: Planet) {
         planet = p;
-        sprite = new Bitmap(hxd.Res.img.Mine.toTile().center());
-        p.graphics.addChildAt(sprite, 0);
+        sprite = new Bitmap(hxd.Res.img.Mine.toTile().center(), p.graphics);
         sprite.alpha = 0.5;
         sprite.scale(0.5);
         MessageManager.addListener(this);

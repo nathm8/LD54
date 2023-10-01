@@ -192,6 +192,25 @@ class CameraMoveTween extends Tween {
 	}
 }
 
+class CameraTrackingMoveTween extends Tween {
+	var camera: Camera;
+	var start: Vector2D;
+	var target: Object;
+
+	public function new(c: Camera, s: Vector2D, t:Object, te:Float, tt:Float) {
+		super(te, tt);
+		camera = c; start = s; target = t;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var p = target.getAbsPos().getPosition();
+		var end = new Vector2D(p.x, p.y);
+		var v = (1-t)*start + t*end;
+		camera.x = v.x; camera.y = v.y;
+	}
+}
+
 class CameraRotateTween extends Tween {
 	var camera: Camera;
 	var start: Float;
@@ -215,6 +234,33 @@ class CameraRotateTween extends Tween {
 		var t = timeElapsed / timeTotal;
 		var r = (1-t)*start + t*end;
 		camera.rotation = r;
+	}
+}
+
+class CameraTrackingRotateTween extends Tween {
+	var camera: Camera;
+	var start: Float;
+	var target: Object;
+
+	public function new(c: Camera, s: Float, o:Object, te:Float, tt:Float) {
+		super(te, tt);
+		camera = c; start = s; target=o;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var end = target.rotation;
+		var src = normaliseTheta(start);
+        var dst = normaliseTheta(end);
+        if (src == dst) return;
+        if (Math.abs(dst - src) > Math.PI) {
+            if (src > dst)
+                src = -(2*Math.PI - src);
+            else
+                dst = -(2*Math.PI - dst);
+        }
+		var r = (1-t)*src + t*dst;
+		camera.rotation = -r;
 	}
 }
 

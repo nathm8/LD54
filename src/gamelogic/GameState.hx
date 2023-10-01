@@ -20,7 +20,9 @@ enum State {
     Travelling;
     PickingUp;
     Moving;
-    Aiming;
+    AimingBot;
+    AimingGun;
+    AimingGunSide;
     Launching;
 }
 
@@ -43,6 +45,7 @@ class GameState implements MessageListener implements Updateable {
     var botGhost: Bitmap;
     var selection: Selection;
     var rocketsLaunched = 0;
+    var loss = false;
 
     // var graphics: Graphics;
     var updateables = new Array<Updateable>();
@@ -77,6 +80,10 @@ class GameState implements MessageListener implements Updateable {
             botGhost = new Bitmap(hxd.Res.img.BotBase.toTile().center(), currentPlanet.graphics);
             botGhost.alpha = 0.5;
             botGhost.visible = false;
+		} if (Std.isOfType(msg, GunTargetingMessage)) {
+            if (state != None) return false;
+            state = AimingGun;
+            MessageManager.send(new SystemViewMessage());
 		} if (Std.isOfType(msg, MineClickedMessage)) {
             if (triangles > 0 && state == None) {
                 state = Placing;
@@ -106,31 +113,40 @@ class GameState implements MessageListener implements Updateable {
                 updateables.push(m);
             }
 		} if (Std.isOfType(msg, PlanetFocusedMessage)) {
-            if (state != Aiming) return false;
+            if (state != AimingBot && state != AimingGun) return false;
             var planet = cast(msg, PlanetFocusedMessage).planet;
             if (selection != null)
                 selection.remove();
             selection = new Selection(planet.graphics);
 		} if (Std.isOfType(msg, PlanetClickedMessage)) {
-            if (state != Aiming) return false;
             var planet = cast(msg, PlanetClickedMessage).planet;
             selection.remove();
             selection = null;
-            if (planet == currentPlanet) {
-                state = None;
-                TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new ParabolicScaleTween(bot.sprite, 0.01, 1.0, 0, 0.5)), 0, 1.5));
-                MessageManager.send(new PlanetViewMessage(currentPlanet));
-            } else {
-                state = Launching;
-                launchBot(planet);
-                MessageManager.send(new BotLaunchedMessage(currentPlanet));
+            if (state == AimingBot) {
+                if (planet == currentPlanet) {
+                    state = None;
+                    TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new ParabolicScaleTween(bot.sprite, 0.01, 1.0, 0, 0.5)), 0, 1.5));
+                    MessageManager.send(new PlanetViewMessage(currentPlanet));
+                } else {
+                    state = Launching;
+                    launchBot(planet);
+                    MessageManager.send(new BotLaunchedMessage(currentPlanet));
+                }
+            } if (state == AimingGun) {
+                if (planet == currentPlanet) {
+                    state = None;
+                    MessageManager.send(new PlanetViewMessage(currentPlanet));
+                } else {
+                    state = AimingGunSide;
+                    MessageManager.send(new PlanetViewMessage(planet));
+                }
             }
 		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
             var gun = cast(msg, PlacedGunClickedMessage).gun;
             if (state == None)
                 MessageManager.send(new DemolishPlaceableMessage(gun));
             else if (state == Travelling) {
-                TweenManager.add(new DelayedCallTween(() -> state = Aiming, 0, 1.6));
+                TweenManager.add(new DelayedCallTween(() -> state = AimingBot, 0, 1.6));
                 TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new ParabolicScaleTween(bot.sprite, 1.0, 0.01, 0, 0.5)), 0, 1.5));
                 TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new SystemViewMessage()), 0, 2.0));
                 TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new LinearRotationTween(gun.turret, 0, -Math.PI/2, 0, 2.0)), 0, 2.0));
@@ -275,6 +291,7 @@ class GameState implements MessageListener implements Updateable {
     }
 
     function lossCheck() {
+        if (loss) return;
         var mineOnPlanet = false;
         var gunOnPlanet = false;
         for (u in updateables) {
@@ -290,6 +307,7 @@ class GameState implements MessageListener implements Updateable {
         }
         if (triangles==0 && squares==0 && !gunOnPlanet && !mineOnPlanet && (tutorialState==PlaceGun || tutorialState==Done)){
             MessageManager.send(new FadeToBlackMessage());
+            loss = true;
         }
     }
 

@@ -33,6 +33,7 @@ class RocketLaunchedMessage extends Message {}
 class VictoryMessage extends Message {}
 class ContinueMessage extends Message {}
 class FadeToBlackMessage extends Message {}
+class GunTargetingMessage extends Message {}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;

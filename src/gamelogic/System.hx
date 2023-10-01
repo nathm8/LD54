@@ -54,10 +54,11 @@ class System implements Updateable {
     function initGraphics(p: Object) {
         graphics = new Graphics(p);
         star1 = new Graphics(graphics);
+        star1.filter = new h2d.filter.Bloom(10,10,100,5,1);
         star1.beginFill(0xFFFF00);
         star1.drawCircle(0,0,300,3);
         
-        star2 = new Graphics(graphics);
+        star2 = new Graphics(star1);
         star2.beginFill(0xFFFF00);
         star2.drawCircle(0,0,300,3);
         star2.rotate(Math.PI);
@@ -68,7 +69,7 @@ class System implements Updateable {
 
     public function update(dt: Float) {
         star1.rotate(dt);
-        star2.rotate(-dt);
+        star2.rotate(-2*dt);
         for (p in planets) p.update(dt);
     }
 

@@ -76,7 +76,7 @@ class Planet implements Updateable implements MessageListener {
         o.add(minimapView, 2);
 
         graphics = new Graphics(p);
-        graphics.beginFill(0x007700);
+        graphics.beginFill(0x503400);
         graphics.drawCircle(0, 0, planetRadius, sides);
     }
 

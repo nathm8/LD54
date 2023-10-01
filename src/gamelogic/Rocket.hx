@@ -27,7 +27,8 @@ class Rocket implements Placeable implements MessageListener {
 
     public function new(p: Planet) {
         planet = p;
-        sprite = new Bitmap(hxd.Res.img.Rocket.toTile().center(), p.graphics);
+        sprite = new Bitmap(hxd.Res.img.Rocket.toTile().center());
+        p.graphics.addChildAt(sprite, 0);
         sprite.alpha = 0.5;
         sprite.scale(0.75);
         MessageManager.addListener(this);
