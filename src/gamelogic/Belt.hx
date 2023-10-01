@@ -111,7 +111,9 @@ class Belt implements Placeable implements MessageListener {
                 next = prev;
                 prev = temp;
             }
-            if (planet.surfaceResources[next]==null && planet.surfaceResources[side] != null) {
+            if (planet.surfaceResources[side] != null) {
+                if (planet.surfaceResources[next]!=null)
+                    MessageManager.send(new BeltRemoveResourceMessage(planet, next));
                 MessageManager.send(new SpawnResourceMessage(planet.surfaceResources[side], planet, next));
                 MessageManager.send(new BeltRemoveResourceMessage(planet, side));
                 if (movingRight){

@@ -6,8 +6,6 @@ TODO
 ==============
 MVP
 --------------
-Implement belt moving resources
-Resupplying Rocket
 Gun transporting Resources
 
 Polish
