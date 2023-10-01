@@ -127,10 +127,14 @@ class Planet implements Updateable implements MessageListener {
         if (sides == 3) {
             if (Std.isOfType(pl, Mine)) offset += 5;
             if (Std.isOfType(pl, Rocket)) offset -= 44;
-        } else {
+        } else if (sides == 4) {
             offset = 17;
             if (Std.isOfType(pl, Mine)) offset += 8;
             if (Std.isOfType(pl, Rocket)) offset -= 30;
+        } else {
+            offset = 25;
+            if (Std.isOfType(pl, Mine)) offset += 5;
+            if (Std.isOfType(pl, Rocket)) offset -= 26;
         }
         var v1 = new Vector2D(planetRadius+70-offset, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;

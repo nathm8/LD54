@@ -56,9 +56,9 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        // getTriangle();
-        // getSquare();
-        // getCircle();
+        getTriangle();
+        getSquare();
+        getCircle();
     }
 
     public function receiveMessage(msg:Message):Bool {
