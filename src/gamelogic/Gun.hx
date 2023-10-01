@@ -66,7 +66,6 @@ class Gun implements Placeable implements MessageListener {
         if (time <= 0) {
             time = FIRING_TIME;
             if (planet.surfaceResources[side] != null) {
-                MessageManager.send(new RocketConsumedResourceMessage(planet, side));
                 var src_global_pos = sprite.localToGlobal(new Vector2D(sprite.x, sprite.y));
                 var start = new Vector2D(src_global_pos.x, src_global_pos.y);
                 var dst_global_pos = targetPlanet.graphics.localToGlobal(targetPlanet.getResourcePositionOnSide(targetSide));
@@ -74,6 +73,7 @@ class Gun implements Placeable implements MessageListener {
 
                 var launchedRes: Bitmap;
                 var type = planet.surfaceResources[side];
+                trace(type);
                 if (type == Triangle) {
                     launchedRes = new Bitmap(hxd.Res.img.Triangle.toTile().center(), sprite.getScene());
                     launchedRes.color = new h3d.Vector(0.8,0,0,1);
@@ -89,6 +89,7 @@ class Gun implements Placeable implements MessageListener {
                 var t = (start - end).magnitude/900;
                 t = t < 0.3 ? 0.3 : t;
 
+                MessageManager.send(new RocketConsumedResourceMessage(planet, side));
                 TweenManager.add(new LaunchTween(launchedRes, targetPlanet, start, 0, t));
                 TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new BeltRemoveResourceMessage(targetPlanet, targetSide)), 0, t));
                 TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new SpawnResourceMessage(type, targetPlanet, targetSide)), 0, t));
