@@ -33,9 +33,6 @@ enum TutorialState {
 
 class GameState implements MessageListener implements Updateable {
 
-    // var circles = 1;
-    // var triangles = 1;
-    // var squares = 1;
     var circles = 0;
     var triangles = 0;
     var squares = 0;
@@ -59,16 +56,22 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        // MessageManager.send(new ShowMineMessage());
-        // MessageManager.send(new ShowGunMessage());
-        // MessageManager.send(new ShowAllMessage());
-        // tutorialState = Done;
+        getTriangle();
+        getSquare();
+        getCircle();
     }
 
     public function receiveMessage(msg:Message):Bool {
         if (Std.isOfType(msg, RocketLaunchedMessage)) {
             rocketsLaunched++;
             if (rocketsLaunched == 1) MessageManager.send(new VictoryMessage());
+        } if (Std.isOfType(msg, MouseClickMessage) && state == Placing) {
+            var params = cast(msg, MouseClickMessage);
+            if (params.event.button == 1){
+                placing.remove();
+                placing = null;
+                state = None;
+            }
         } if (Std.isOfType(msg, BotClickedMessage) && state == None) {
             state = Moving;
             botGhost = new Bitmap(hxd.Res.img.BotBase.toTile().center(), currentPlanet.graphics);

@@ -57,10 +57,10 @@ class Planet implements Updateable implements MessageListener {
     }
 
     function initInteractive() {
-        var interactive = new Interactive(planetRadius*2, planetRadius*2, graphics);
+        var interactive = new Interactive(1.5*planetRadius, 1.5*planetRadius, graphics);
         interactive.isEllipse = true;
-        interactive.x = -planetRadius;
-        interactive.y = -planetRadius;
+        interactive.x = -1.5*planetRadius/2;
+        interactive.y = -1.5*planetRadius/2;
         interactive.onOver = (e: hxd.Event) -> MessageManager.send(new PlanetFocusedMessage(this));
         interactive.onClick = (e: hxd.Event) -> MessageManager.send(new PlanetClickedMessage(this));
         interactive.cursor = Default;

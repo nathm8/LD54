@@ -26,3 +26,4 @@ Belt moving resources animation
 
 Bugs
 ---------------
+rocket platforms not pickup-able (unreplicated)

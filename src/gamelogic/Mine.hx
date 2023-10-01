@@ -1,5 +1,6 @@
 package gamelogic;
 
+import h2d.Graphics;
 import h2d.Bitmap;
 import h2d.Interactive;
 import gamelogic.Resource.ResourceType;
@@ -37,10 +38,9 @@ class Mine implements Placeable implements MessageListener {
         active = planet.resources[i] != null;
         sprite.alpha = 1;
         side = i;
-
         var interactive = new Interactive(120, 120, sprite);
-        interactive.x -= 120/2;
-        interactive.y -= 120/2;
+        interactive.x = -120/2;
+        interactive.y = -120/2;
         interactive.onClick = demolish;
         interactive.cursor = Button;
     }

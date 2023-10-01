@@ -37,9 +37,9 @@ class Rocket implements Placeable implements MessageListener {
         side = i;
         active = true;
 
-        var interactive = new Interactive(120, 120, sprite);
+        var interactive = new Interactive(120, 156, sprite);
         interactive.x -= 120/2;
-        interactive.y -= 120/2;
+        interactive.y -= 156/2;
         interactive.onClick = demolish;
         interactive.cursor = Button;
     }

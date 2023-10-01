@@ -19,6 +19,7 @@ class Belt implements Placeable implements MessageListener {
         sprite = new Bitmap(hxd.Res.img.Belt.toTile().center(), p.graphics);
         sprite.scale(0.75);
         arrowL = new Bitmap(hxd.Res.img.BeltArrow.toTile().center(), sprite);
+        arrowL.alpha = 0.5;
         arrowL.x = -30;
         arrowL.y = 65;
         arrowR = new Bitmap(hxd.Res.img.BeltArrow.toTile().center(), sprite);
