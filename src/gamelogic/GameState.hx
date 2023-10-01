@@ -46,6 +46,10 @@ class GameState implements MessageListener implements Updateable {
     var selection: Selection;
     var rocketsLaunched = 0;
     var loss = false;
+    // gun targeting
+    var aimingTarget: Planet;
+    var aimingGhost: Bitmap;
+    var aimingSide: Int;
 
     // var graphics: Graphics;
     var updateables = new Array<Updateable>();
@@ -136,9 +140,13 @@ class GameState implements MessageListener implements Updateable {
                 if (planet == currentPlanet) {
                     state = None;
                     MessageManager.send(new PlanetViewMessage(currentPlanet));
+                    MessageManager.send(new CancelGunTargeting());
                 } else {
                     state = AimingGunSide;
                     MessageManager.send(new PlanetViewMessage(planet));
+                    aimingGhost = new Bitmap(hxd.Res.img.RocketPlatform.toTile().center(), planet.graphics);
+                    aimingGhost.visible = false;
+                    aimingTarget = planet;
                 }
             }
 		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
@@ -163,6 +171,13 @@ class GameState implements MessageListener implements Updateable {
                 var p = new Vector2D(currentPlanet.planetRadius + 50, 0).rotate(p.angle());
                 botGhost.x = p.x; botGhost.y = p.y;
                 botGhost.rotation = p.angle() + Math.PI/2;
+            } if (state == AimingGunSide) {
+                aimingGhost.visible = true;
+                i = aimingTarget.getClosestSide(normaliseTheta(p.angle()));
+                var p = aimingTarget.getBuildingPositionOnSide(i);
+                aimingGhost.x = p.x; aimingGhost.y = p.y;
+                aimingGhost.rotation = p.angle() + Math.PI/2;
+                
             }
         } if (Std.isOfType(msg, MouseReleaseMessage)) {
             var p = new Vector2D(hxd.Window.getInstance().mouseX, hxd.Window.getInstance().mouseY);
@@ -185,6 +200,14 @@ class GameState implements MessageListener implements Updateable {
                 botGhost = null;
                 bot.moveTo(p.angle());
                 TweenManager.add(new DelayedCallTween(() -> state = None, 0, 1.5));
+            } if (state == AimingGunSide) {
+                aimingSide = aimingTarget.getClosestSide(normaliseTheta(p.angle()));
+                aimingGhost.remove();
+                aimingGhost = null;
+                state = None;
+                MessageManager.send(new GunTargetAcquired(aimingTarget, aimingSide));
+                MessageManager.send(new SystemViewMessage());
+                TweenManager.add(new DelayedCallTween(()->MessageManager.send(new PlanetViewMessage(currentPlanet)),0,3));
             }
         } if (Std.isOfType(msg, ResourceClickedMessage)) {
             var res = cast(msg, ResourceClickedMessage).resource;

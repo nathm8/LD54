@@ -15,13 +15,17 @@ class Gun implements Placeable implements MessageListener {
     var time = 0.0;
     public var side: Int;
     public var cost = [Triangle => false, Circle => false, Square => true];
-    var target: Bitmap;
+    var targetIcon: Bitmap;
+    var targeting = false;
+    var hasTarget = false;
+    var target: Planet;
+    var targetSide: Int;
 
     public function new(p: Planet) {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.GunBase.toTile().center(), p.graphics);
-        target = new Bitmap(hxd.Res.img.Target.toTile().center(), sprite);
-        target.y = 75;
+        targetIcon = new Bitmap(hxd.Res.img.Target.toTile().center(), sprite);
+        targetIcon.y = 75;
         var t = hxd.Res.img.GunTurret.toTile();
         t.setCenterRatio(1.0/3.0,49.0/120.0);
         turret = new Bitmap(t, sprite);
@@ -47,10 +51,10 @@ class Gun implements Placeable implements MessageListener {
         interactive.onClick = handleClick;
         interactive.cursor = Button;
 
-        interactive = new Interactive(37, 37, target);
+        interactive = new Interactive(37, 37, targetIcon);
         interactive.x -= 37/2;
         interactive.y -= 37/2;
-        interactive.onClick = (e: hxd.Event) -> MessageManager.send(new GunTargetingMessage());
+        interactive.onClick = (e: hxd.Event) -> {MessageManager.send(new GunTargetingMessage()); targeting=true;};
         interactive.cursor = Button;
     }
 
@@ -64,6 +68,14 @@ class Gun implements Placeable implements MessageListener {
     public function receiveMessage(msg:Message):Bool {
         if (Std.isOfType(msg, BotLaunchedMessage)) {
             TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new LinearRotationTween(turret, -Math.PI/2, 0, 0, 2.0)), 0, 2.0));
+        } if (Std.isOfType(msg, CancelGunTargeting)) {
+            targeting = false;
+        } if (Std.isOfType(msg, GunTargetAcquired)) {
+            if (!targeting) return false;
+            var params = cast(msg, GunTargetAcquired);
+            target = params.planet;
+            targetSide = params.side;
+            hasTarget = true;
         }
         return false;
     }

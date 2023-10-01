@@ -34,6 +34,12 @@ class VictoryMessage extends Message {}
 class ContinueMessage extends Message {}
 class FadeToBlackMessage extends Message {}
 class GunTargetingMessage extends Message {}
+class CancelGunTargeting extends Message {}
+class GunTargetAcquired extends Message {
+	public var planet: Planet;
+	public var side: Int;
+	public function new(p: Planet, s: Int) {super(); planet=p; side=s;}	
+}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;

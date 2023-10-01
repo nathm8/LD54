@@ -122,7 +122,7 @@ class Planet implements Updateable implements MessageListener {
         return 0;
     }
 
-    public function getBuildingPositionOnSide(i: Int, pl: Placeable): Vector2D {
+    public function getBuildingPositionOnSide(i: Int, pl: Placeable=null): Vector2D {
         var offset = 0.0;
         if (sides == 3) {
             if (Std.isOfType(pl, Mine)) offset += 5;
