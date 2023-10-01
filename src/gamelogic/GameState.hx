@@ -26,8 +26,8 @@ enum State {
 
 enum TutorialState {
     Start;
-    Mine;
-    Gun;
+    PlaceMine;
+    PlaceGun;
     Done;
 }
 
@@ -228,7 +228,7 @@ class GameState implements MessageListener implements Updateable {
     function getTriangle() {
         MessageManager.send(new AddResourceToInventoryMessage(Triangle));
         if (tutorialState == Start) {
-            tutorialState = Mine;
+            tutorialState = PlaceMine;
             MessageManager.send(new ShowMineMessage());
         }
         triangles += 1;
@@ -237,8 +237,8 @@ class GameState implements MessageListener implements Updateable {
 
     function getSquare() {
         MessageManager.send(new AddResourceToInventoryMessage(Square));
-        if (tutorialState == Mine) {
-            tutorialState = Gun;
+        if (tutorialState == PlaceMine) {
+            tutorialState = PlaceGun;
             MessageManager.send(new ShowGunMessage());
         }
         squares += 1;
@@ -247,7 +247,7 @@ class GameState implements MessageListener implements Updateable {
 
     function getCircle() {
         MessageManager.send(new AddResourceToInventoryMessage(Circle));
-        if (tutorialState == Gun) {
+        if (tutorialState == PlaceGun) {
             tutorialState = Done;
             MessageManager.send(new ShowAllMessage());
         }
@@ -271,6 +271,26 @@ class GameState implements MessageListener implements Updateable {
     public function update(dt: Float) {
         for (u in updateables) u.update(dt);
         resourceCheck();
+        lossCheck();
+    }
+
+    function lossCheck() {
+        var mineOnPlanet = false;
+        var gunOnPlanet = false;
+        for (u in updateables) {
+            if (Std.isOfType(u, Mine)) {
+                var m = cast(u, Mine);
+                if (m.planet == currentPlanet)
+                    mineOnPlanet = true;
+            } if (Std.isOfType(u, Gun)) {
+                var m = cast(u, Gun);
+                if (m.planet == currentPlanet)
+                    gunOnPlanet = true;
+            }
+        }
+        if (triangles==0 && squares==0 && !gunOnPlanet && !mineOnPlanet && (tutorialState==PlaceGun || tutorialState==Done)){
+            MessageManager.send(new FadeToBlackMessage());
+        }
     }
 
     function resourceCheck() {

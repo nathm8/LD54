@@ -120,6 +120,51 @@ class UIController implements MessageListener implements Updateable {
         rocketsPerMinute.visible = true;
     }
 
+    function defeat() {
+        var splash = new Bitmap(hxd.Res.img.VictorySplash.toTile().center(), ui);
+        splash.x = 500;
+        splash.y = -300;
+        splash.color = new h3d.Vector(0.2,0.2,0.2,1);
+
+        var title= new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		title.smooth = false;
+		title.scale(7);
+		title.textAlign = Center;
+        title.textColor = 0xDDDDDD;
+        title.x = 0;
+        title.y = -220;
+        title.text = "Defeat";
+
+        var bot = new Bitmap(hxd.Res.img.BotLose.toTile().center(), splash);
+        bot.x = 0;
+        bot.y = -45;
+        bot.scale(2);
+
+        var text = new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		text.smooth = false;
+		text.scale(3);
+		text.textAlign = Center;
+        text.textColor = 0xBBBBBB;
+        text.x = 0;
+        text.y = 25;
+        text.text = "You are stranded without\n resources or means of escape";
+
+        var continueButton = new h2d.Text(hxd.res.DefaultFont.get(), splash);
+		continueButton.smooth = false;
+		continueButton.scale(5);
+		continueButton.textAlign = Center;
+        continueButton.textColor = 0xDDDDDD;
+        continueButton.x = 0;
+        continueButton.y = 120;
+        continueButton.text = "Restart";
+        TweenManager.add(new GlowInfiniteTween(continueButton, 0, 1.5));
+
+        var interactive = new Interactive(continueButton.getBounds().width, continueButton.getBounds().height, continueButton);
+        interactive.x = -continueButton.getBounds().width/2;
+        interactive.y = -continueButton.getBounds().height/2;
+        interactive.onClick = (e: hxd.Event) -> MessageManager.send(new RestartMessage());
+    }
+
     public function receiveMessage(msg:Message):Bool {
         if (Std.isOfType(msg, AddResourceToInventoryMessage)) {
             var res = cast(msg, AddResourceToInventoryMessage).resourceType;
@@ -131,6 +176,13 @@ class UIController implements MessageListener implements Updateable {
             }
         } if (Std.isOfType(msg, VictoryMessage)) {
             victory();
+        } if (Std.isOfType(msg, FadeToBlackMessage)) {
+            var black = new Graphics(ui);
+            black.beginFill(0x000000);
+            black.drawRect(0,-750,1000,1000);
+
+            TweenManager.add(new FadeInTween(black,0,8));
+            TweenManager.add(new DelayedCallTween(()->defeat(),0,8));
         } if (Std.isOfType(msg, RocketLaunchedMessage)) {
                 rocketsLaunched++;
         } if (Std.isOfType(msg, RemoveResourceFromInventoryMessage)) {

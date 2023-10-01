@@ -47,6 +47,21 @@ class FadeTween extends Tween {
 	}
 }
 
+class FadeInTween extends Tween {
+	var obj:Object;
+
+	public function new(o:Object, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o;
+	}
+
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		obj.alpha = t;
+	}
+}
+
 
 class SpinTween extends Tween {
 	var obj:Object;

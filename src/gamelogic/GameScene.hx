@@ -4,6 +4,7 @@ import gamelogic.Updateable;
 import gamelogic.physics.PhysicalWorld;
 import graphics.CameraController;
 import graphics.UIController;
+import graphics.TweenManager;
 import h2d.Graphics;
 import h2d.Scene;
 import h2d.Camera;
@@ -19,6 +20,7 @@ class GameScene extends Scene implements MessageListener {
 	var uiController: UIController;
 	var gameState: GameState;
 	var victoryScreen = false;
+	var minimap: Camera;
 	
 	public function new() {
 		super();
@@ -38,13 +40,8 @@ class GameScene extends Scene implements MessageListener {
 		var bot = new Bot(p, true);
 		updateables.push(bot);
 		
-		uiController = new UIController(this);
-		updateables.push(uiController);
-		gameState = new GameState(p, bot);
-		updateables.push(gameState);
-
 		// very hacky minimap
-		var minimap = new Camera(this);
+		minimap = new Camera(this);
 		minimap.layerVisible = (layer) -> layer == 0 || layer == 2;
 		minimap.anchorX = 0.5;
 		minimap.anchorY = 0.5;
@@ -52,6 +49,11 @@ class GameScene extends Scene implements MessageListener {
 		minimap.scaleY = 0.045;
 		minimap.x = -7750;
 		minimap.y = -7750;
+
+		uiController = new UIController(this);
+		updateables.push(uiController);
+		gameState = new GameState(p, bot);
+		updateables.push(gameState);
 	}
 
 	public function update(dt:Float) {
@@ -70,6 +72,9 @@ class GameScene extends Scene implements MessageListener {
 			else {
 				interactiveCamera = uiController.camera;
 			}
+		} if (Std.isOfType(msg, FadeToBlackMessage)) {
+			victoryScreen = true;
+			interactiveCamera = uiController.camera;
 		} if (Std.isOfType(msg, VictoryMessage)) {
 			victoryScreen = true;
 			interactiveCamera = uiController.camera;
