@@ -90,6 +90,7 @@ class Gun implements Placeable implements MessageListener {
                 t = t < 0.3 ? 0.3 : t;
 
                 TweenManager.add(new LaunchTween(launchedRes, targetPlanet, start, 0, t));
+                TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new BeltRemoveResourceMessage(targetPlanet, targetSide)), 0, t));
                 TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new SpawnResourceMessage(type, targetPlanet, targetSide)), 0, t));
                 TweenManager.add(new DelayedCallTween(() -> launchedRes.remove(), 0, t));
             }

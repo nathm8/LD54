@@ -27,7 +27,7 @@ class System implements Updateable {
         for (i in 0...sides.length) {
             var places = [for (j in 0...sides[i]) j];
             RNGManager.rand.shuffle(places);
-            var pl = new Planet(graphics, l, sides[i], 300*(i+3), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
+            var pl = new Planet(graphics, l, sides[i], 300*(i+2), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
             // var pl = new Planet(graphics, l, sides[i], 300*(i+3) + RNGManager.rand.random(100), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
             if (!start_set && sides[i] == 3){
                 start_set = true;

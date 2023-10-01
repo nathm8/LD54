@@ -23,6 +23,8 @@ class UIController implements MessageListener implements Updateable {
     var timeText: Text;
     var rocketsPerMinute: Text;
 
+    var tutorialText: Text;
+
     public function new(s: Scene) {
         ui = new Graphics();
 		ui.beginFill(0x333333);
@@ -35,6 +37,17 @@ class UIController implements MessageListener implements Updateable {
         sprite = new Bitmap(hxd.Res.img.UI0.toTile(), ui);
 
         MessageManager.addListener(this);
+
+        tutorialText= new h2d.Text(hxd.res.DefaultFont.get(), ui);
+		tutorialText.smooth = false;
+		tutorialText.scale(2);
+		tutorialText.textAlign = Center;
+        tutorialText.textColor = 0xDDDDDD;
+        tutorialText.x = 500;
+        tutorialText.y = -650;
+        tutorialText.text = "Click on the Triangle to pick it up.\nOnce picked up, resources can be clicked on in your inventory to drop them.";
+        tutorialText.alpha = 0;
+        TweenManager.add(new DelayedCallTween(()->TweenManager.add(new FadeInTween(tutorialText, 0, 3)), 0, 4));
 
         timeText= new h2d.Text(hxd.res.DefaultFont.get(), ui);
 		timeText.smooth = false;
@@ -206,6 +219,7 @@ class UIController implements MessageListener implements Updateable {
             }
             MessageManager.send(new DropResourceMessage(res.type));
         } if (Std.isOfType(msg, ShowMineMessage)) {
+            tutorialText.text = "Build a mine over the underground Square.\nIf you misplace it you can click the mine to recover the Triangle.\nYou can right click to cancel a building placement.";
             sprite.tile = hxd.Res.img.UI1.toTile();
             var mineInteractive = new Interactive(120,120,sprite);
             mineInteractive.x = 37;
@@ -214,6 +228,7 @@ class UIController implements MessageListener implements Updateable {
             mineInteractive.cursor = Button;
             costs[0] = new ResourceIcon(ui, Triangle, new Vector2D(92, 215));
         } if (Std.isOfType(msg, ShowGunMessage)) {
+            tutorialText.text = "Build a Railgun. Afterwards click on the Bot,\nthen the Railgun, to travel to another Planet.\nMake sure to bring at least a Square with you.";
             sprite.tile = hxd.Res.img.UI2.toTile();
             var gunInteractive = new Interactive(120,120,sprite);
             gunInteractive.x = 174;
@@ -222,6 +237,8 @@ class UIController implements MessageListener implements Updateable {
             gunInteractive.cursor = Button;
             costs[1] = new ResourceIcon(ui, Square, new Vector2D(237, 215), true);
         } if (Std.isOfType(msg, ShowAllMessage)) {
+            tutorialText.text = "Looks like you have the hang of it. Launch a Rocket to win.\nPress r to restart if you become stuck.";
+            TweenManager.add(new DelayedCallTween(()->TweenManager.add(new FadeTween(tutorialText,0,5)), 0, 4));
             sprite.tile = hxd.Res.img.UI4.toTile();
             var beltInteractive = new Interactive(120,120,sprite);
             beltInteractive.x = 304;

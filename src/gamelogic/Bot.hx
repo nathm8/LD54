@@ -23,10 +23,11 @@ class Bot implements Updateable implements MessageListener {
     var faceTime = 1.0;
     var waking = 0;
 
-
     public function new(p: Planet, gameStart=false) {
         planet = p;
         sprite = new Bitmap(hxd.Res.img.BotBase.toTile().center(), p.graphics);
+        var thrust = new Bitmap(hxd.Res.img.BotThrust.toTile().center(), sprite);
+        TweenManager.add(new InfiniteScaleTween(thrust, 1, 1.15, 0, 1));
         face = new Bitmap(hxd.Res.img.BotWake1.toTile().center(), sprite);
         face.filter = new h2d.filter.Bloom(2,2,10,1.2,5);
         theta = -Math.PI/2;

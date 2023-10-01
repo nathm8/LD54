@@ -305,6 +305,28 @@ class ScaleBounceTween extends Tween {
 	}
 }
 
+class InfiniteScaleTween extends Tween {
+	var object:Object;
+	var scaleMin:Float;
+	var scaleMax:Float;
+
+	public function new(o:Object, ss:Float, sb: Float, te:Float, tt:Float) {
+		super(te, tt);
+		object = o;
+		kill = false;
+		scaleMin = ss;
+		scaleMax = sb;
+	}
+
+	override function update(dt:Float) {
+		super.update(dt);
+		if (timeElapsed >= timeTotal)
+			timeElapsed = 0;
+		var t = timeElapsed / timeTotal;
+		object.setScale(scaleMax*t + scaleMin*(1-t));
+	}
+}
+
 class ParabolicScaleTween extends Tween {
 	var obj: Object;
 	var start: Float;

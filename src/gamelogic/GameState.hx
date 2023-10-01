@@ -51,6 +51,8 @@ class GameState implements MessageListener implements Updateable {
     var aimingGhost: Bitmap;
     var aimingSide: Int;
 
+    var losingFrames = 0;
+
     // var graphics: Graphics;
     var updateables = new Array<Updateable>();
     var placing: Placeable;
@@ -63,9 +65,9 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        getTriangle();
-        getSquare();
-        getCircle();
+        // getTriangle();
+        // getSquare();
+        // getCircle();
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -260,6 +262,7 @@ class GameState implements MessageListener implements Updateable {
             TweenManager.add(new ParabolicMoveTween(placeable.sprite, new Vector2D(placeable.sprite.x, placeable.sprite.y), bot.position, 0, 0.5));
             TweenManager.add(new ParabolicScaleTween(placeable.sprite, 0.5, 0.0, 0, 0.5));
             TweenManager.add(new DelayedCallTween(() -> placeable.remove(), 0, 0.5));
+            updateables.remove(placeable);
         }
 		return false;
 	}
@@ -328,7 +331,19 @@ class GameState implements MessageListener implements Updateable {
                     gunOnPlanet = true;
             }
         }
-        if (triangles==0 && squares==0 && !gunOnPlanet && !mineOnPlanet && (tutorialState==PlaceGun || tutorialState==Done)){
+        var triangleOnPlanet = false;
+        var squareOnPlanet = false;
+        for (u in currentPlanet.surfaceResources) {
+            if (u==Triangle)
+                triangleOnPlanet = true;
+            if (u==Square)
+                squareOnPlanet = true;
+        }
+        if (triangles==0 && squares==0 && !gunOnPlanet && !mineOnPlanet && !triangleOnPlanet && !squareOnPlanet)
+            losingFrames++;
+        else
+            losingFrames = 0;
+        if (losingFrames > 400) {
             MessageManager.send(new FadeToBlackMessage());
             loss = true;
         }
