@@ -115,6 +115,11 @@ class SpawnResourceMessage extends Message {
 	public var type: ResourceType;
 	public function new(t: ResourceType, p: Planet, s: Int) {super(); type = t; planet = p; side = s;}
 }
+class BeltRemoveResourceMessage extends Message {
+	public var planet: Planet;
+	public var side: Int;
+	public function new(p: Planet, s: Int) {super(); planet = p; side = s;}
+}
 
 interface MessageListener {
     public function receiveMessage(msg: Message): Bool;

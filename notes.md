@@ -21,6 +21,9 @@ Bot move to build
 Build animation
 
 Show Defeat screen
+
+If it's easy I'd include an additional ego boost message at ten rockets btw 
+
 Belt pickup animation
 Belt moving resources animation
 

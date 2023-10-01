@@ -52,6 +52,10 @@ class Resource implements MessageListener {
     }
 
     public function receiveMessage(msg:Message):Bool {
+        if (Std.isOfType(msg, BeltRemoveResourceMessage)) {
+            var params = cast(msg, BeltRemoveResourceMessage);
+            if (params.planet == planet && params.side == side) remove();
+        }
         return false;
     }
 

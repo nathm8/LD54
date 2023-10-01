@@ -174,6 +174,10 @@ class Planet implements Updateable implements MessageListener {
                 throw(1);
             }
             surfaceResources[res.side] = null;
+        } if (Std.isOfType(msg, BeltRemoveResourceMessage)) {
+            var params = cast(msg, BeltRemoveResourceMessage);
+            if (params.planet != this) return false;
+            surfaceResources[params.side] = null;
         }
         return false;
     }
