@@ -5,15 +5,14 @@ import h2d.Interactive;
 import gamelogic.Resource.ResourceType;
 import utilities.Vector2D;
 import utilities.MessageManager;
+import utilities.Constants.normaliseTheta;
 
 class Gun implements Placeable implements MessageListener {
     public var sprite: Bitmap;
-    var turret: Bitmap;
+    public var turret: Bitmap;
     public var planet: Planet;
     var time = 0.0;
     public var side: Int;
-    var active = false;
-    var full = false;
     public var cost = [Triangle => false, Circle => false, Square => true];
 
     public function new(p: Planet) {
@@ -36,24 +35,21 @@ class Gun implements Placeable implements MessageListener {
     }
 
     public function place(i: Int) {
-        active = planet.resources[i] != null;
         sprite.alpha = 1;
         side = i;
 
-        var interactive = new Interactive(120, 120, sprite);
-        interactive.x -= 120/2;
-        interactive.y -= 120/2;
-        interactive.onClick = demolish;
+        var interactive = new Interactive(130, 130, sprite);
+        interactive.x = -130/2;
+        interactive.y = -130/2;
+        interactive.onClick = handleClick;
         interactive.cursor = Button;
     }
 
     public function update(dt: Float) {
-        if (!active || !full) return;
     }
 
-    function demolish(e: hxd.Event) {
-        active = false;
-        MessageManager.send(new DemolishPlaceableMessage(this));
+    function handleClick(e: hxd.Event) {
+        MessageManager.send(new PlacedGunClickedMessage(this));
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -62,6 +58,5 @@ class Gun implements Placeable implements MessageListener {
 
     public function remove() {
         sprite.remove();
-        active = false;
     }
 }

@@ -4,6 +4,7 @@ import gamelogic.Placeable;
 import hxd.Event;
 import gamelogic.Resource;
 import gamelogic.Mine;
+import gamelogic.Gun;
 import gamelogic.Resource.ResourceType;
 import gamelogic.Planet;
 import graphics.ResourceIcon;
@@ -20,6 +21,7 @@ class RestartMessage extends Message {}
 class ShowMineMessage extends Message {}
 class ShowGunMessage extends Message {}
 class ShowAllMessage extends Message {}
+class SystemViewMessage extends Message {}
 class DarkenTrianglesMessage extends Message {}
 class BrightenTrianglesMessage extends Message {}
 class DarkenCirclesMessage extends Message {}
@@ -69,6 +71,10 @@ class DumpInventoryMessage extends Message {
 	public var resourceIcon: ResourceIcon;
 	public function new(r: ResourceIcon) {super(); resourceIcon = r;}
 }
+class PlacedGunClickedMessage extends Message {
+	public var gun: Gun;
+	public function new(r: Gun) {super(); gun = r;}
+}
 class DemolishPlaceableMessage extends Message {
 	public var placeable: Placeable;
 	public function new(r: Placeable) {super(); placeable = r;}
@@ -76,6 +82,14 @@ class DemolishPlaceableMessage extends Message {
 class PickUpPlaceableMessage extends Message {
 	public var placeable: Placeable;
 	public function new(r: Placeable) {super(); placeable = r;}
+}
+class PlanetFocusedMessage extends Message {
+	public var planet: Planet;
+	public function new(r: Planet) {super(); planet = r;}
+}
+class PlanetClickedMessage extends Message {
+	public var planet: Planet;
+	public function new(r: Planet) {super(); planet = r;}
 }
 class SpawnResourceMessage extends Message {
 	public var planet: Planet;

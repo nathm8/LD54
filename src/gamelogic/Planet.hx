@@ -8,6 +8,7 @@ import utilities.MessageManager;
 import h2d.Graphics;
 import h2d.Layers;
 import h2d.Object;
+import h2d.Interactive;
 import gamelogic.Updateable;
 import utilities.Constants.normaliseTheta;
 
@@ -40,12 +41,23 @@ class Planet implements Updateable implements MessageListener {
         yearElapsed = RNGManager.rand.rand()*year;
         initGraphics(p, o);
         update(0);
+        initInteractive();
         MessageManager.addListener(this);
+    }
+
+    function initInteractive() {
+        var interactive = new Interactive(planetRadius*2, planetRadius*2, graphics);
+        interactive.isEllipse = true;
+        interactive.x = -planetRadius;
+        interactive.y = -planetRadius;
+        interactive.onOver = (e: hxd.Event) -> MessageManager.send(new PlanetFocusedMessage(this));
+        interactive.onClick = (e: hxd.Event) -> MessageManager.send(new PlanetClickedMessage(this));
+        interactive.cursor = Default;
     }
 
     function initGraphics(p: Object, o: Layers) {
         var orbit = new Graphics();
-        orbit.lineStyle(17.5, 0xFFFFFF);
+        orbit.lineStyle(17.5, 0xFFFFFF, 0.5);
         orbit.drawCircle(500, 500, orbitRadius);
         o.add(orbit, 2);
 

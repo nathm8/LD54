@@ -4,6 +4,7 @@ import h2d.Camera;
 import h2d.Object;
 import h2d.Drawable;
 import utilities.Vector2D;
+import utilities.Constants.normaliseTheta;
 import gamelogic.Bot;
 import gamelogic.Planet;
 
@@ -60,6 +61,116 @@ class ParabolicMoveTween extends Tween {
 		t = t*t;
 		var v = (1-t)*start + t*end;
 		obj.x = v.x; obj.y = v.y;
+	}
+}
+
+class LinearRotationTween extends Tween {
+	var obj: Object;
+	var start: Float;
+	var end: Float;
+
+	public function new(o: Object, s: Float, e:Float, te:Float, tt:Float) {
+		super(te, tt);
+		var src = normaliseTheta(s);
+        var dst = normaliseTheta(e);
+        if (src == dst) return;
+        if (Math.abs(dst - src) > Math.PI) {
+            if (src > dst)
+                src = -(2*Math.PI - src);
+            else
+                dst = -(2*Math.PI - dst);
+        }
+		obj = o; start = src; end = dst;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var r = (1-t)*start + t*end;
+		obj.rotation = r;
+	}
+}
+
+class CameraMoveTween extends Tween {
+	var camera: Camera;
+	var start: Vector2D;
+	var end: Vector2D;
+
+	public function new(c: Camera, s: Vector2D, e:Vector2D, te:Float, tt:Float) {
+		super(te, tt);
+		camera = c; start = s; end = e;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var v = (1-t)*start + t*end;
+		camera.x = v.x; camera.y = v.y;
+	}
+}
+
+class CameraRotateTween extends Tween {
+	var camera: Camera;
+	var start: Float;
+	var end: Float;
+
+	public function new(c: Camera, s: Float, e:Float, te:Float, tt:Float) {
+		super(te, tt);
+		var src = normaliseTheta(s);
+        var dst = normaliseTheta(e);
+        if (src == dst) return;
+        if (Math.abs(dst - src) > Math.PI) {
+            if (src > dst)
+                src = -(2*Math.PI - src);
+            else
+                dst = -(2*Math.PI - dst);
+        }
+		camera = c; start = src; end = dst;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var r = (1-t)*start + t*end;
+		camera.rotation = r;
+	}
+}
+
+class CameraZoomTween extends Tween {
+	var camera: Camera;
+	var start: Float;
+	var end: Float;
+
+	public function new(c: Camera, s: Float, e:Float, te:Float, tt:Float) {
+		super(te, tt);
+		camera = c; start = s; end = e;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		var r = (1-t)*start + t*end;
+		camera.scaleX = r; camera.scaleY = r;
+	}
+}
+
+class ScaleBounceTween extends Tween {
+	var object:Object;
+	var reverse=false;
+	var scaleMin:Float;
+	var scaleMax:Float;
+
+	public function new(o:Object, ss:Float, sb: Float, te:Float, tt:Float) {
+		super(te, tt);
+		object = o;
+		kill = false;
+		scaleMin = ss;
+		scaleMax = sb;
+	}
+
+	override function update(dt:Float) {
+		dt = reverse ? -dt: dt;
+		super.update(dt);
+		if (timeElapsed < 0 || timeElapsed >= timeTotal)
+			reverse = !reverse;
+		var t = timeElapsed / timeTotal;
+		object.setScale(scaleMax*t + scaleMin*(1-t));
 	}
 }
 

@@ -7,6 +7,7 @@ import gamelogic.Updateable;
 import gamelogic.Resource.ResourceType;
 import graphics.TweenManager;
 import graphics.TweenManager.BotPlanetTravelTween;
+import graphics.Selection;
 import utilities.MessageManager.Message;
 import utilities.MessageManager.MessageListener;
 import utilities.MessageManager;
@@ -19,6 +20,7 @@ enum State {
     Travelling;
     PickingUp;
     Moving;
+    Aiming;
 }
 
 enum TutorialState {
@@ -32,12 +34,13 @@ class GameState implements MessageListener implements Updateable {
 
     var circles = 0;
     var triangles = 0;
-    var squares = 0;
+    var squares = 1;
     var state = None;
     var tutorialState = Start;
     var currentPlanet: Planet;
     var bot: Bot;
     var botGhost: Bitmap;
+    var selection: Selection;
 
     // var graphics: Graphics;
     var updateables = new Array<Updateable>();
@@ -47,13 +50,15 @@ class GameState implements MessageListener implements Updateable {
         MessageManager.addListener(this);
         currentPlanet = p;
         bot = b;
+        MessageManager.send(new SpawnResourceMessage(Triangle, currentPlanet, 1));
+        
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        MessageManager.send(new SpawnResourceMessage(Triangle, currentPlanet, 1));
+        MessageManager.send(new ShowGunMessage());
     }
 
     public function receiveMessage(msg:Message):Bool {
-        if (Std.isOfType(msg, BotClickedMessage)) {
+        if (Std.isOfType(msg, BotClickedMessage) && state == None) {
             state = Moving;
             botGhost = new Bitmap(hxd.Res.img.BotBase.toTile().center(), currentPlanet.graphics);
             botGhost.alpha = 0.5;
@@ -71,6 +76,29 @@ class GameState implements MessageListener implements Updateable {
                 var m = new Gun(currentPlanet);
                 placing = m;
                 updateables.push(m);
+            }
+		} if (Std.isOfType(msg, PlanetFocusedMessage)) {
+            trace(state);
+            if (state != Aiming) return false;
+            var planet = cast(msg, PlanetFocusedMessage).planet;
+            trace("planet focused");
+            if (selection != null)
+                selection.remove();
+            selection = new Selection(planet.graphics);
+		} if (Std.isOfType(msg, PlanetClickedMessage)) {
+            if (state != Aiming) return false;
+            var planet = cast(msg, PlanetClickedMessage).planet;
+            selection.remove();
+            selection = null;
+		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
+            var gun = cast(msg, PlacedGunClickedMessage).gun;
+            if (state == None)
+                MessageManager.send(new DemolishPlaceableMessage(gun));
+            else if (state == Travelling) {
+                TweenManager.add(new DelayedCallTween(() -> state = Aiming, 0, 1.6));
+                TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new ParabolicScaleTween(bot.sprite, 1.0, 0.01, 0, 0.5)), 0, 1.5));
+                TweenManager.add(new DelayedCallTween(() -> MessageManager.send(new SystemViewMessage()), 0, 2.0));
+                TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new LinearRotationTween(gun.turret, 0, -Math.PI/2, 0, 2.0)), 0, 2.0));
             }
 		} if (Std.isOfType(msg, MouseMoveMessage)) {
             var p = new Vector2D(hxd.Window.getInstance().mouseX, hxd.Window.getInstance().mouseY);

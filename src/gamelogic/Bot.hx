@@ -14,7 +14,7 @@ import utilities.Constants.normaliseTheta;
 class Bot implements Updateable implements MessageListener {
 
     var planet: Planet;
-    var sprite: Bitmap;
+    public var sprite: Bitmap;
     var face: Bitmap;
     public var theta = 0.0;
     var time = 0.0;

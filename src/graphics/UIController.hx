@@ -41,6 +41,7 @@ class UIController implements MessageListener {
         } if (Std.isOfType(msg, RemoveResourceFromInventoryMessage)) {
             var res = cast(msg, RemoveResourceFromInventoryMessage).resourceType;
             for (i in 0...3) {
+                if (inventory[i] == null) continue;
                 if (inventory[i].type == res) {
                     inventory[i].remove();
                     inventory[i] = null;

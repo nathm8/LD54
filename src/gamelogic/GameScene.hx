@@ -4,6 +4,7 @@ import gamelogic.Updateable;
 import gamelogic.physics.PhysicalWorld;
 import graphics.CameraController;
 import graphics.UIController;
+import h2d.Graphics;
 import h2d.Scene;
 import h2d.Camera;
 import h2d.Text;
