@@ -73,7 +73,6 @@ class Gun implements Placeable implements MessageListener {
 
                 var launchedRes: Bitmap;
                 var type = planet.surfaceResources[side];
-                trace(type);
                 if (type == Triangle) {
                     launchedRes = new Bitmap(hxd.Res.img.Triangle.toTile().center(), sprite.getScene());
                     launchedRes.color = new h3d.Vector(0.8,0,0,1);

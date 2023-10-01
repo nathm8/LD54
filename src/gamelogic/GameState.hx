@@ -126,7 +126,8 @@ class GameState implements MessageListener implements Updateable {
             selection = new Selection(planet.graphics);
 		} if (Std.isOfType(msg, PlanetClickedMessage)) {
             var planet = cast(msg, PlanetClickedMessage).planet;
-            selection.remove();
+            if (selection != null)
+                selection.remove();
             selection = null;
             if (state == AimingBot) {
                 if (planet == currentPlanet) {
