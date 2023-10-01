@@ -82,6 +82,10 @@ class BotViewMessage extends Message {
 	public var planet: Planet;
 	public function new(r: Object, t: Float, p: Planet) {super(); object = r; transitTime = t; planet = p;}
 }
+class PlanetViewMessage extends Message {
+	public var planet: Planet;
+	public function new(p: Planet) {super(); planet = p;}
+}
 class DemolishPlaceableMessage extends Message {
 	public var placeable: Placeable;
 	public function new(r: Placeable) {super(); placeable = r;}

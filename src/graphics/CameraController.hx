@@ -51,6 +51,7 @@ class CameraController implements Updateable implements MessageListener {
             camera.x = p.x;
             camera.y = p.y - 50;
             camera.rotation = -target.rotation;
+            camera.layerVisible = (layer) -> layer == 0;
             // camera.rotation = -target.graphics.rotation - Math.PI + Math.PI/6;
         } else if (focus == System) {
             camera.x = 500;
@@ -82,6 +83,14 @@ class CameraController implements Updateable implements MessageListener {
             TweenManager.add(new DelayedCallTween(() -> focus = Bot, 0, 0.25));
             TweenManager.add(new DelayedCallTween(() -> focus = Planet, 0, t));
             TweenManager.add(new DelayedCallTween(() -> target = planet, 0, t));
+        } if (Std.isOfType(msg, PlanetViewMessage)) {
+            var planet = cast(msg, PlanetViewMessage).planet.graphics;
+            target = planet;
+            var p = target.getAbsPos().getPosition();
+            TweenManager.add(new CameraZoomTween(camera, 0.17, 1.0, 0, 3));
+            TweenManager.add(new CameraMoveTween(camera, new Vector2D(camera.x, camera.y), new Vector2D(p.x, p.y), 0, 3));
+            TweenManager.add(new CameraRotateTween(camera, camera.rotation, -target.rotation, 0, 3));
+            TweenManager.add(new DelayedCallTween(() -> focus = Planet, 0, 3));
         }
         return false;
     }    

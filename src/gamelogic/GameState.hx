@@ -21,6 +21,7 @@ enum State {
     PickingUp;
     Moving;
     Aiming;
+    Launching;
 }
 
 enum TutorialState {
@@ -88,7 +89,14 @@ class GameState implements MessageListener implements Updateable {
             var planet = cast(msg, PlanetClickedMessage).planet;
             selection.remove();
             selection = null;
-            launchBot(planet);
+            if (planet == currentPlanet) {
+                state = None;
+                TweenManager.add(new DelayedCallTween(() -> TweenManager.add(new ParabolicScaleTween(bot.sprite, 0.01, 1.0, 0, 0.5)), 0, 1.5));
+                MessageManager.send(new PlanetViewMessage(currentPlanet));
+            } else {
+                state = Launching;
+                launchBot(planet);
+            }
 		} if (Std.isOfType(msg, PlacedGunClickedMessage)) {
             var gun = cast(msg, PlacedGunClickedMessage).gun;
             if (state == None)
@@ -258,14 +266,20 @@ class GameState implements MessageListener implements Updateable {
         bot = null;
         var launchedBot = new Bitmap(hxd.Res.img.BotScared.toTile().center(), currentPlanet.graphics.getScene());
         launchedBot.x = start.x; launchedBot.y = start.y;
-        var t = (start - end).magnitude/90;
+        var t = (start - end).magnitude/900;
         t = t < 0.3 ? 0.3 : t;
         
         TweenManager.add(new LaunchTween(launchedBot, target, start, 0, t));
         TweenManager.add(new SpinTween(launchedBot, 0, t));
+        TweenManager.add(new DelayedCallTween(() -> initBot(target), 0, t));
+        TweenManager.add(new DelayedCallTween(() -> launchedBot.remove(), 0, t));
         MessageManager.send(new BotViewMessage(launchedBot, t, target));
+    }
 
-        
-
+    function initBot(p: Planet) {
+        currentPlanet = p;
+        bot = new Bot(p, false);
+        updateables.push(bot);
+        state = None;
     }
 }
