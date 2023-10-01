@@ -4,6 +4,7 @@ import h2d.Text;
 import h2d.Bitmap;
 import h2d.Interactive;
 import graphics.TweenManager;
+import graphics.ResourceIcon;
 import gamelogic.Resource.ResourceType;
 import utilities.Vector2D;
 import utilities.MessageManager;
@@ -14,9 +15,15 @@ class Rocket implements Placeable implements MessageListener {
     public var side: Int;
     public var cost = [Triangle => true, Circle => true, Square => true];
     var countdown = 1.0;
-    var countdownInts = [10,9,8,7,6,5,4,3,2,1];
+    var countdownInts = [for (i in 1...11) i];
     var active = false;
     var updateables = new Array<Updateable>();
+
+    var circleCharged = true;
+    var triangleCharged = true;
+    var circleIcon: ResourceIcon;
+    var triangleIcon: ResourceIcon;
+    var hasLaunched = false;
 
     public function new(p: Planet) {
         planet = p;
@@ -24,6 +31,15 @@ class Rocket implements Placeable implements MessageListener {
         sprite.alpha = 0.5;
         sprite.scale(0.75);
         MessageManager.addListener(this);
+
+        circleIcon = new ResourceIcon(sprite, Circle, new Vector2D(-30, 95));
+        circleIcon.sprite.visible = false;
+        circleIcon.sprite.scale(0.5);
+        circleIcon.darken();
+        triangleIcon = new ResourceIcon(sprite, Triangle, new Vector2D(30, 95));
+        triangleIcon.sprite.visible = false;
+        triangleIcon.sprite.scale(0.5);
+        triangleIcon.darken();
     }
 
     public function setPosition(v: Vector2D) {
@@ -45,6 +61,25 @@ class Rocket implements Placeable implements MessageListener {
     }
 
     public function update(dt: Float) {
+        if (!circleCharged && !active) {
+            if (planet.surfaceResources[side] == Circle) {
+                MessageManager.send(new RocketConsumedResourceMessage(planet, side));
+                circleCharged = true;
+                circleIcon.brighten();
+            }
+        }
+        if (!triangleCharged && !active) {
+            if (planet.surfaceResources[side] == Triangle) {
+                MessageManager.send(new RocketConsumedResourceMessage(planet, side));
+                triangleCharged = true;
+                triangleIcon.brighten();
+            }
+        }
+        if (hasLaunched && triangleCharged && circleCharged && !active) {
+            sprite.tile = hxd.Res.img.Rocket.toTile().center();
+            active = true;
+            countdownInts = [for (i in 1...11) i];
+        }
         if (!active) return;
         countdown -= dt;
         if (countdown <= 0) {
@@ -65,6 +100,13 @@ class Rocket implements Placeable implements MessageListener {
         active = false;
         cost = [Triangle => false, Circle => false, Square => true];
         // TODO show greyed out triangle and circle
+        circleCharged = false;
+        circleIcon.darken();
+        triangleCharged = false;
+        triangleIcon.darken();
+        circleIcon.sprite.visible = true;
+        triangleIcon.sprite.visible = true;
+        hasLaunched = true;
     }
 
     function demolish(e: hxd.Event) {
@@ -96,22 +138,22 @@ class CountdownText implements Updateable {
         TweenManager.add(new FadeTween(text, 0, 0.9));
         TweenManager.add(new ParabolicMoveTween(text, new Vector2D(100,-75), new Vector2D(100,-200), 0, 0.9));
         var exclaims = "";
-        if (i == 10) {
+        if (i == 1) {
             exclaims = "!!!!";
             text.scale(1.3);
             TweenManager.add(new ShakeTween(text, 16, 0, 0.9));
             text.textColor = 0xFF0000;
-        } if (i == 9) {
+        } if (i == 2) {
             exclaims = "!!!";
             text.scale(1.2);
             TweenManager.add(new ShakeTween(text, 8, 0, 0.9));
             text.textColor = 0xFC5F5F;
-        } if (i == 8) {
+        } if (i == 3) {
             exclaims = "!!"; 
             text.scale(1.1);
             TweenManager.add(new ShakeTween(text, 2, 0, 0.9));
             text.textColor = 0xFC8888;
-        } if (i == 7) {
+        } if (i == 4) {
             exclaims = "!"; 
             text.scale(1.05);
             TweenManager.add(new ShakeTween(text, 1, 0, 0.9));

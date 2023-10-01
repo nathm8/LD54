@@ -21,7 +21,7 @@ class UIController implements MessageListener implements Updateable {
     var time = 0.0;
     var rocketsText: Text;
     var timeText: Text;
-    var rocketsPerSecond: Text;
+    var rocketsPerMinute: Text;
 
     public function new(s: Scene) {
         ui = new Graphics();
@@ -50,15 +50,15 @@ class UIController implements MessageListener implements Updateable {
         rocketsText.textColor = 0xDDDDDD;
         rocketsText.y = 25;
 
-        rocketsPerSecond= new h2d.Text(hxd.res.DefaultFont.get(), rocketsText);
-		rocketsPerSecond.smooth = false;
-		rocketsPerSecond.textAlign = Left;
-        rocketsPerSecond.textColor = 0xDDDDDD;
-        rocketsPerSecond.y = 25;
+        rocketsPerMinute= new h2d.Text(hxd.res.DefaultFont.get(), rocketsText);
+		rocketsPerMinute.smooth = false;
+		rocketsPerMinute.textAlign = Left;
+        rocketsPerMinute.textColor = 0xDDDDDD;
+        rocketsPerMinute.y = 25;
 
         rocketsText.visible = false;
         timeText.visible = false;
-        rocketsPerSecond.visible = false;
+        rocketsPerMinute.visible = false;
     }
 
     function victory() {
@@ -117,7 +117,7 @@ class UIController implements MessageListener implements Updateable {
         MessageManager.send(new ContinueMessage());
         rocketsText.visible = true;
         timeText.visible = true;
-        rocketsPerSecond.visible = true;
+        rocketsPerMinute.visible = true;
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -248,9 +248,9 @@ class UIController implements MessageListener implements Updateable {
 
         timeText.text = "Time: "+Std.string(Math.round(time));
         rocketsText.text = "Rockets: "+Std.string(rocketsLaunched);
-        var s = Std.string(rocketsLaunched/time);
+        var s = Std.string(rocketsLaunched/time*60);
         var i = s.indexOf(".");
         s = s.substring(0,i+2);
-        rocketsPerSecond.text = "Rockets\\s: "+s;
+        rocketsPerMinute.text = "Rockets\\m: "+s;
     }
 }

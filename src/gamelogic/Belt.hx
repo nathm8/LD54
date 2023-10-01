@@ -115,48 +115,32 @@ class Belt implements Placeable implements MessageListener {
                 MessageManager.send(new SpawnResourceMessage(planet.surfaceResources[side], planet, next));
                 MessageManager.send(new BeltRemoveResourceMessage(planet, side));
                 if (movingRight){
-                    if (rightUp) {
-                        trace("moving right arm down1");
+                    if (rightUp) 
                         rightArm.tile = hxd.Res.img.BeltRightDown.toTile().center();
-                    }
-                    else {
-                        trace("moving right arm up1");
+                    else 
                         rightArm.tile = hxd.Res.img.BeltRightUp.toTile().center();
-                    }
                     rightUp = !rightUp;
                 } else {
-                    if (leftUp) {
-                        trace("moving left arm down1");
+                    if (leftUp)
                         leftArm.tile = hxd.Res.img.BeltLeftDown.toTile().center();
-                    }
-                    else {
-                        trace("moving left arm up1");
+                    else 
                         leftArm.tile = hxd.Res.img.BeltLeftUp.toTile().center();
-                    }
                     leftUp = !leftUp;
                 }
             } if (planet.surfaceResources[side]==null && planet.surfaceResources[prev] != null) {
                 MessageManager.send(new SpawnResourceMessage(planet.surfaceResources[prev], planet, side));
                 MessageManager.send(new BeltRemoveResourceMessage(planet, prev));
                 if (!movingRight){
-                    if (rightUp) {
-                        trace("moving right arm down2");
+                    if (rightUp) 
                         rightArm.tile = hxd.Res.img.BeltRightDown.toTile().center();
-                    }
-                    else {
-                        trace("moving right arm up2");
+                    else 
                         rightArm.tile = hxd.Res.img.BeltRightUp.toTile().center();
-                    }
                     rightUp = !rightUp;
                 } else {
-                    if (leftUp) {
-                        trace("moving left arm down2");
+                    if (leftUp)
                         leftArm.tile = hxd.Res.img.BeltLeftDown.toTile().center();
-                    }
-                    else {
-                        trace("moving left arm up2");
+                    else
                         leftArm.tile = hxd.Res.img.BeltLeftUp.toTile().center();
-                    }
                     leftUp = !leftUp;
                 }
             }
@@ -164,6 +148,7 @@ class Belt implements Placeable implements MessageListener {
     }
 
     function demolish(e: hxd.Event) {
+        active = false;
         MessageManager.send(new DemolishPlaceableMessage(this));
     }
 

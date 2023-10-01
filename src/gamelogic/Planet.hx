@@ -102,7 +102,7 @@ class Planet implements Updateable implements MessageListener {
         res.sprite.rotation = getAngleOnSide(i);
         res.sprite.scale(0.5);
 
-        var map_icon = new ResourceIcon(minimapView, t, getBuildingPositionOnSide(i, null), true);
+        var map_icon = new ResourceIcon(minimapView, t, 1.75*getBuildingPositionOnSide(i, null), true);
         map_icon.sprite.rotation = getAngleOnSide(i);
         map_icon.sprite.scale(4);
     }
@@ -151,7 +151,7 @@ class Planet implements Updateable implements MessageListener {
         var v1 = new Vector2D(planetRadius+40-offset, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
         var v2 = new Vector2D(planetRadius+40-offset, 0).rotate((i+1)/sides*2*Math.PI); 
-        return (v1*0.4 + v2*0.6);
+        return (v1*0.25 + v2*0.75);
     }
 
     public function getAngleOnSide(i: Int): Float {
@@ -176,6 +176,10 @@ class Planet implements Updateable implements MessageListener {
             surfaceResources[res.side] = null;
         } if (Std.isOfType(msg, BeltRemoveResourceMessage)) {
             var params = cast(msg, BeltRemoveResourceMessage);
+            if (params.planet != this) return false;
+            surfaceResources[params.side] = null;
+        } if (Std.isOfType(msg, RocketConsumedResourceMessage)) {
+            var params = cast(msg, RocketConsumedResourceMessage);
             if (params.planet != this) return false;
             surfaceResources[params.side] = null;
         }

@@ -55,6 +55,9 @@ class Resource implements MessageListener {
         if (Std.isOfType(msg, BeltRemoveResourceMessage)) {
             var params = cast(msg, BeltRemoveResourceMessage);
             if (params.planet == planet && params.side == side) remove();
+        } if (Std.isOfType(msg, RocketConsumedResourceMessage)) {
+            var params = cast(msg, RocketConsumedResourceMessage);
+            if (params.planet == planet && params.side == side) remove();
         }
         return false;
     }

@@ -20,14 +20,12 @@ class System implements Updateable {
 
         var start_set = false;
 
-        var sides = [3,3,3,4,4];
+        var sides = [3,3,3,4,4,5];
         RNGManager.rand.shuffle(sides);
         var resources = [Triangle, Square, Circle];
         // var radii = [50,100,150,200,250,300,350];
         for (i in 0...sides.length) {
-            if (resources.length == 0) resources = [Triangle, Square, Circle];
             var places = [for (j in 0...sides[i]) j];
-            RNGManager.rand.shuffle(resources);
             RNGManager.rand.shuffle(places);
             var pl = new Planet(graphics, l, sides[i], 300*(i+3), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
             // var pl = new Planet(graphics, l, sides[i], 300*(i+3) + RNGManager.rand.random(100), 10+30*RNGManager.rand.rand(), 60+300*RNGManager.rand.rand());
@@ -35,11 +33,18 @@ class System implements Updateable {
                 start_set = true;
                 pl.starting = true;
                 pl.placeResource(Square, 0);
-            }  if (!pl.starting) {
-                for (_ in 0...(sides[i] - 2 + RNGManager.rand.random(1))){
-                    var r = resources.pop();
-                    var p = places.pop();
-                    pl.placeResource(r, p);
+            } if (!pl.starting) {
+                if (sides[i] == 5) {
+                    pl.placeResource(Circle, 0);
+                    pl.placeResource(Triangle, 1);
+                } else {
+                    for (_ in 0...(sides[i] - 2 + RNGManager.rand.random(1))){
+                        var r = resources.pop();
+                        if (resources.length == 0) resources = [Triangle, Square, Circle];
+                        RNGManager.rand.shuffle(resources);
+                        var p = places.pop();
+                        pl.placeResource(r, p);
+                    }
                 }
             }
             planets.push(pl);

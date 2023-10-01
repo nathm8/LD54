@@ -120,6 +120,11 @@ class BeltRemoveResourceMessage extends Message {
 	public var side: Int;
 	public function new(p: Planet, s: Int) {super(); planet = p; side = s;}
 }
+class RocketConsumedResourceMessage extends Message {
+	public var planet: Planet;
+	public var side: Int;
+	public function new(p: Planet, s: Int) {super(); planet = p; side = s;}
+}
 
 interface MessageListener {
     public function receiveMessage(msg: Message): Bool;
