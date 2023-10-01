@@ -12,7 +12,7 @@ class ResourceIcon {
     public var type: ResourceType;
     var color: h3d.Vector;
 
-    public function new(p: Object, t: ResourceType, pos: Vector2D, underground=false) {
+    public function new(p: Object, t: ResourceType, pos: Vector2D, interactable=false) {
         type = t;
         if (type == Triangle) {
             sprite = new Bitmap(hxd.Res.img.Triangle.toTile().center(), p);
@@ -26,9 +26,7 @@ class ResourceIcon {
         }
         sprite.color = color;
         sprite.x = pos.x; sprite.y = pos.y;
-        if (underground)
-            sprite.scale(0.5);
-        else {
+        if (!interactable) {
             var interactive = new Interactive(49, 49, sprite);
             interactive.x -= 49/2;
             interactive.y -= 49/2;

@@ -73,7 +73,7 @@ class UIController implements MessageListener {
             gunInteractive.y = 52;
             gunInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new GunClickedMessage());
             gunInteractive.cursor = Button;
-            costs[1] = new ResourceIcon(ui, Square, new Vector2D(237, 215));
+            costs[1] = new ResourceIcon(ui, Square, new Vector2D(237, 215), true);
         } if (Std.isOfType(msg, ShowAllMessage)) {
             sprite.tile = hxd.Res.img.UI4.toTile();
             var beltInteractive = new Interactive(120,120,sprite);
@@ -81,15 +81,15 @@ class UIController implements MessageListener {
             beltInteractive.y = 52;
             beltInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new BeltClickedMessage());
             beltInteractive.cursor = Button;
-            costs[2] = new ResourceIcon(ui, Circle, new Vector2D(373, 215));
+            costs[2] = new ResourceIcon(ui, Circle, new Vector2D(373, 215), true);
             var rocketInteractive = new Interactive(120,120,sprite);
             rocketInteractive.x = 439;
             rocketInteractive.y = 52;
             rocketInteractive.onClick = (e: hxd.Event) -> MessageManager.send(new RocketClickedMessage());
             rocketInteractive.cursor = Button;
-            costs[3] = new ResourceIcon(ui, Triangle, new Vector2D(466, 215));
-            costs[4] = new ResourceIcon(ui, Square, new Vector2D(516, 215));
-            costs[5] = new ResourceIcon(ui, Circle, new Vector2D(566, 215));
+            costs[3] = new ResourceIcon(ui, Triangle, new Vector2D(456, 215), true);
+            costs[4] = new ResourceIcon(ui, Square, new Vector2D(506, 215), true);
+            costs[5] = new ResourceIcon(ui, Circle, new Vector2D(556, 215), true);
         } if (Std.isOfType(msg, DarkenTrianglesMessage)) {
             darkenTriangles();
         } if (Std.isOfType(msg, BrightenTrianglesMessage)) {

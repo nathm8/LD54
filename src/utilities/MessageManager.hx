@@ -29,6 +29,7 @@ class DarkenCirclesMessage extends Message {}
 class BrightenCirclesMessage extends Message {}
 class DarkenSquaresMessage extends Message {}
 class BrightenSquaresMessage extends Message {}
+class RocketLaunchedMessage extends Message {}
 class MouseClickMessage extends Message {
 	public var event: Event;
 	public var worldPosition: Vector2D;

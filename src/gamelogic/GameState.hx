@@ -33,9 +33,9 @@ enum TutorialState {
 
 class GameState implements MessageListener implements Updateable {
 
-    var circles = 0;
-    var triangles = 0;
-    var squares = 0;
+    var circles = 1;
+    var triangles = 1;
+    var squares = 1;
     var state = None;
     var tutorialState = Start;
     var currentPlanet: Planet;
@@ -55,7 +55,10 @@ class GameState implements MessageListener implements Updateable {
         
         // debug
         // graphics = new Graphics(currentPlanet.graphics);
-        // MessageManager.send(new ShowGunMessage());
+        MessageManager.send(new ShowMineMessage());
+        MessageManager.send(new ShowGunMessage());
+        MessageManager.send(new ShowAllMessage());
+        tutorialState = Done;
     }
 
     public function receiveMessage(msg:Message):Bool {
@@ -68,6 +71,13 @@ class GameState implements MessageListener implements Updateable {
             if (triangles > 0 && state == None) {
                 state = Placing;
                 var m = new Mine(currentPlanet);
+                placing = m;
+                updateables.push(m);
+            }
+		} if (Std.isOfType(msg, RocketClickedMessage)) {
+            if (triangles == 1 && squares == 1 && circles == 1 && state == None) {
+                state = Placing;
+                var m = new Rocket(currentPlanet);
                 placing = m;
                 updateables.push(m);
             }
@@ -113,7 +123,7 @@ class GameState implements MessageListener implements Updateable {
             p -= new Vector2D(500, 500);
             var i = currentPlanet.getClosestSide(normaliseTheta(p.angle()));
             if (state == Placing) {
-                var v = currentPlanet.getBuildingPositionOnSide(i);
+                var v = currentPlanet.getBuildingPositionOnSide(i, placing);
                 placing.setPosition(v);
             } if (state == Moving) {
                 botGhost.visible = true;
@@ -210,7 +220,6 @@ class GameState implements MessageListener implements Updateable {
         }
         triangles += 1;
         state = None;
-        MessageManager.send(new BrightenTrianglesMessage());
     }
 
     function getSquare() {
@@ -221,7 +230,6 @@ class GameState implements MessageListener implements Updateable {
         }
         squares += 1;
         state = None;
-        MessageManager.send(new BrightenSquaresMessage());
     }
 
     function getCircle() {
@@ -232,7 +240,6 @@ class GameState implements MessageListener implements Updateable {
         }
         circles += 1;
         state = None;
-        MessageManager.send(new BrightenCirclesMessage());
     }
 
     function canPickup() : Bool {
@@ -240,20 +247,26 @@ class GameState implements MessageListener implements Updateable {
     }
 
     function decrementResource(r: ResourceType) {
-        if (r == Triangle) {
+        if (r == Triangle)
             triangles--;
-            if (triangles == 0) MessageManager.send(new DarkenTrianglesMessage());
-        } else if (r == Circle) {
+        else if (r == Circle)
             circles--;
-            if (circles == 0) MessageManager.send(new DarkenCirclesMessage());
-        } else {
+        else
             squares--;
-            if (squares == 0) MessageManager.send(new DarkenSquaresMessage());
-        }
     }
 
     public function update(dt: Float) {
         for (u in updateables) u.update(dt);
+        resourceCheck();
+    }
+
+    function resourceCheck() {
+        if (squares == 0) MessageManager.send(new DarkenSquaresMessage());
+        else MessageManager.send(new BrightenSquaresMessage());
+        if (circles == 0) MessageManager.send(new DarkenCirclesMessage());
+        else MessageManager.send(new BrightenCirclesMessage());
+        if (triangles == 0) MessageManager.send(new DarkenTrianglesMessage());
+        else MessageManager.send(new BrightenTrianglesMessage());
     }
 
     function launchBot(target: Planet) {

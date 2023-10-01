@@ -4,6 +4,7 @@ import h2d.Camera;
 import h2d.Object;
 import h2d.Drawable;
 import utilities.Vector2D;
+import utilities.RNGManager;
 import utilities.Constants.normaliseTheta;
 import gamelogic.Bot;
 import gamelogic.Planet;
@@ -77,6 +78,39 @@ class ParabolicMoveTween extends Tween {
 		t = t*t;
 		var v = (1-t)*start + t*end;
 		obj.x = v.x; obj.y = v.y;
+	}
+}
+
+class ExponentialMoveTween extends Tween {
+	var obj: Object;
+	var start: Vector2D;
+	var end: Vector2D;
+
+	public function new(o: Object, s: Vector2D, e:Vector2D, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o; start = s; end = e;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		var t = timeElapsed / timeTotal;
+		t = Math.pow(2, t)-1;
+		var v = (1-t)*start + t*end;
+		obj.x = v.x; obj.y = v.y;
+	}
+}
+
+class ShakeTween extends Tween {
+	var obj: Object;
+	var amount: Float;
+
+	public function new(o: Object, a: Float, te:Float, tt:Float) {
+		super(te, tt);
+		obj = o; amount = a;
+	}
+	override function update(dt:Float) {
+		super.update(dt);
+		obj.x += amount * RNGManager.rand.rand();
+		obj.y += amount * RNGManager.rand.rand();
 	}
 }
 

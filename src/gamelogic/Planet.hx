@@ -100,8 +100,9 @@ class Planet implements Updateable implements MessageListener {
         resources[i] = t;
         var res = new ResourceIcon(graphics, t, getUndergroundResourcePositionOnSide(i), true);
         res.sprite.rotation = getAngleOnSide(i);
+        res.sprite.scale(0.5);
 
-        var map_icon = new ResourceIcon(minimapView, t, getBuildingPositionOnSide(i), true);
+        var map_icon = new ResourceIcon(minimapView, t, getBuildingPositionOnSide(i, null), true);
         map_icon.sprite.rotation = getAngleOnSide(i);
         map_icon.sprite.scale(4);
     }
@@ -121,10 +122,12 @@ class Planet implements Updateable implements MessageListener {
         return 0;
     }
 
-    public function getBuildingPositionOnSide(i: Int): Vector2D {
-        var v1 = new Vector2D(planetRadius+70, 0).rotate(i/sides*2*Math.PI); 
+    public function getBuildingPositionOnSide(i: Int, pl: Placeable): Vector2D {
+        var m = sides == 4 ? 0 : 20;
+        if (Std.isOfType(pl, Rocket)) m -= 60;
+        var v1 = new Vector2D(planetRadius+70-m, 0).rotate(i/sides*2*Math.PI); 
         if (i+1 == sides) i = -1;
-        var v2 = new Vector2D(planetRadius+70, 0).rotate((i+1)/sides*2*Math.PI); 
+        var v2 = new Vector2D(planetRadius+70-m, 0).rotate((i+1)/sides*2*Math.PI); 
         return (v1 + v2)/2;
     }
 
@@ -143,7 +146,7 @@ class Planet implements Updateable implements MessageListener {
     }
 
     public function getAngleOnSide(i: Int): Float {
-        var v = getBuildingPositionOnSide(i);
+        var v = getBuildingPositionOnSide(i, null);
         return v.angle() + Math.PI/2;
     }
 
